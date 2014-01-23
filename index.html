@@ -26,10 +26,7 @@
     var logoutEl = document.querySelector('.logout');
     var usernameEl = document.querySelector('.username');
 
-    var auth = new WebmakerAuthClient({
-      endpoint: 'http://localhost:1981',
-      prefix: 'webmaker-'
-    });
+    var auth = new WebmakerAuthClient();
 
     auth.on('foo', function() {
       console.log('foo');
