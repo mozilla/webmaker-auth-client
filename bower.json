@@ -1,0 +1,12 @@
+{
+  "name": "webmaker-auth-client",
+  "main": "webmaker-auth-client.js",
+  "version": "0.0.0",
+  "authors": [
+    "Kate Hudson <k88hudson@gmail.com>"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "eventEmitter": "~4.2.7"
+  }
+}
