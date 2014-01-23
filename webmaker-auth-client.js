@@ -1,8 +1,10 @@
 window.WebmakerAuthClient = function(options) {
   var self = this;
 
+  options = options || {};
+
   self.endpoint = options.endpoint || 'http://webmaker-events-service.herokuapp.com';
-  self.url = options.url || self.location + '/auth';
+  self.url = options.url || self.endpoint + '/auth';
   self.audience = options.audience || window.location.origin;
   self.prefix = options.prefix || 'webmaker-';
   self.seamless = options.seamless === false ? false : true;
@@ -127,7 +129,7 @@ window.WebmakerAuthClient = function(options) {
             self.emitter.emitEvent('error', [http.responseText]);
             self.storage.clear();
           } else if (http.readyState === 4) {
-            self.emitter.emitEvent('error', ['Looks like ' + self.location + ' is not responding...']);
+            self.emitter.emitEvent('error', ['Looks like ' + self.endpoint + ' is not responding...']);
           }
 
         };
