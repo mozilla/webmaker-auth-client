@@ -122,9 +122,9 @@ module.exports = function(options) {
         });
       }
     },
-    create: function(req, res) {
+    create: function(req, res, next) {
       var hReq = hyperquest.post(self.loginURL + "/api/user/create");
-      hReq.on("error", authenticateCallback);
+      hReq.on("error", next);
       hReq.on("response", function(resp) {
         if (resp.statusCode !== 200) {
           return res.json(500, {
