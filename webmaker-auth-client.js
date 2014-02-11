@@ -34,7 +34,7 @@ window.WebmakerAuthClient = function(options) {
     self.emitter.removeListener(event, cb);
   };
 
-  function verify(email) {
+  self.verify = function(email) {
 
     var http = new XMLHttpRequest();
     var body = JSON.stringify({
@@ -179,6 +179,9 @@ window.WebmakerAuthClient = function(options) {
   self.storage = {
     get: function(key) {
       var data = JSON.parse(localStorage.getItem(self.localStorageKey));
+      if (!data) {
+        return;
+      }
       if (key) {
         return data[key];
       } else {
@@ -198,8 +201,5 @@ window.WebmakerAuthClient = function(options) {
       delete localStorage[self.localStorageKey];
     }
   };
-
-
-};
 
 };
