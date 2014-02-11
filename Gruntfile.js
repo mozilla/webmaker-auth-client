@@ -35,7 +35,7 @@ module.exports = function (grunt) {
       }
     },
     jsbeautifier: {
-      modify: {,
+      modify: {
         src: ['Gruntfile.js', 'webmaker-login.js', 'example/webmaker-auth-client.js'],
         options: {
           config: '.jsbeautifyrc'
