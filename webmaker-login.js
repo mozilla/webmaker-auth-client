@@ -100,7 +100,7 @@ module.exports = function(options) {
     verify: function(req, res) {
       if (!req.session.email && !req.session.user) {
         return res.send(200, {
-          error: "No Session"
+          status: "No Session"
         });
       }
       res.send(200, {
