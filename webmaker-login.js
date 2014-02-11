@@ -11,7 +11,6 @@ module.exports = function(options) {
   var self = this;
 
   self.loginURL = options.loginURL || 'http://testuser:password@login.mofostaging.org';
-  self.audience = options.audience;
 
   self.maxAge = options.maxAge || 2678400000; // 31 days. Persona saves session data for 1 month
   self.forceSSL = options.forceSSL || false;
@@ -21,11 +20,6 @@ module.exports = function(options) {
   // No user-defined login URL
   if (!options.loginURL) {
     console.error('WARNING (webmaker-loginapi): loginURL was not passed into configuration. Defaulting to http://testuser:password@login.mofostaging.org.');
-  }
-
-  // No audience
-  if (!options.audience) {
-    throw new Error('webmaker-loginapi: You need to supply an audience parameter in options. This is the domain of wherever your app is running.');
   }
 
   self.cookieParser = function() {
@@ -72,6 +66,7 @@ module.exports = function(options) {
 
   self.handlers = {
     authenticate: function(req, res) {
+
       var hReq = hyperquest.post(self.loginURL + "/api/user/authenticate")
 
       // TODO: figure out how to send a POST body in Hyperquest
@@ -117,7 +112,7 @@ module.exports = function(options) {
       }
       if ( req.session.email !== req.body.email ) {
         res.send(200, {
-          error: "Session set, email mismatch"
+          error: "Session set, email mismatch",
           user: req.session.user
         });
       } else {

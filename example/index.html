@@ -35,11 +35,6 @@
     auth.on('login', function(data) {
       console.log('login', data);
       usernameEl.innerHTML = data.email;
-      $.ajaxSetup({
-        beforeSend: function (xhr) {
-         xhr.setRequestHeader('Authorization', 'Bearer ' + data.token);
-        }
-      });
     });
 
     auth.on('logout', function() {

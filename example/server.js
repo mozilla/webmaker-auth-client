@@ -8,10 +8,7 @@ var env = new Habitat();
 var app = express();
 var login = new WebmakerLogin({
   loginURL: env.get('LOGIN_URL'),
-  audience: env.get('AUDIENCE'),
-  secretKey: env.get('SECRET_KEY'),
-  forceSSL: env.get('FORCE_SSL'),
-  maxAge: 2678400000
+  secretKey: env.get('SECRET_KEY')
 });
 
 app.use(express.logger('dev'));
@@ -22,8 +19,9 @@ app.use(express.urlencoded());
 app.use(login.cookieParser());
 app.use(login.cookieSession());
 
-app.get('/user', login.handlers.get);
-app.post('/user', login.handlers.create);
+app.post('/verify', login.handlers.verify);
+app.post('/authenticate', login.handlers.authenticate);
+app.post('/create', login.handlers.create);
 
 app.listen(env.get('PORT'), function() {
   console.log('App listening on ' + env.get('PORT'));
