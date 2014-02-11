@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta charset="utf-8">
+  <title>Persona example</title>
+
+</head>
+<body>
+
+  <div class="main">
+
+    <h1 class="welcome">Welcome, <span class="username"></span></h1>
+
+    <button class="login">Login</button>
+    <button class="logout">Logout</button>
+
+  </div>
+
+  <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+  <script src="https://login.persona.org/include.js"></script>
+  <script src="../bower_components/eventEmitter/EventEmitter.js"></script>
+  <script src="../webmaker-auth-client.js"></script>
+  <script>
+    var loginEl = document.querySelector('.login');
+    var logoutEl = document.querySelector('.logout');
+    var usernameEl = document.querySelector('.username');
+
+    var auth = new WebmakerAuthClient();
+
+    auth.on('foo', function() {
+      console.log('foo');
+    });
+
+    auth.on('login', function(data) {
+      console.log('login', data);
+      usernameEl.innerHTML = data.email;
+      $.ajaxSetup({
+        beforeSend: function (xhr) {
+         xhr.setRequestHeader('Authorization', 'Bearer ' + data.token);
+        }
+      });
+    });
+
+    auth.on('logout', function() {
+      usernameEl.innerHTML = '';
+    });
+
+    auth.on('error', function(err) {
+      console.log(err);
+    });
+
+    auth.init();
+    loginEl.addEventListener('click', auth.login, false);
+    logoutEl.addEventListener('click', auth.logout, false);
+
+  </script>
+
+</body>
+</html>

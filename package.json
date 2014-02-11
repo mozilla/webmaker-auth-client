@@ -1,0 +1,26 @@
+{
+  "name": "webmaker-auth-client",
+  "version": "0.0.0",
+  "description": "## Install",
+  "main": "webmaker-auth-client.js",
+  "scripts": {
+    "postinstall": "./node_modules/.bin/bower install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/k88hudson/webmaker-auth-client.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/k88hudson/webmaker-auth-client/issues"
+  },
+  "homepage": "https://github.com/k88hudson/webmaker-auth-client",
+  "dependencies": {
+    "express": "~3.4.8",
+    "webmaker-loginapi": "~0.1.9",
+    "habitat": "~1.1.0",
+    "hyperquest": "~0.2.0",
+    "express-persona": "~0.1.1"
+  }
+}
