@@ -82,79 +82,6 @@ window.WebmakerAuthClient = function(options) {
 
   }
 
-  function authenticate(assertion) {
-    var data = {
-      audience: self.audience,
-      assertion: assertion
-    };
-
-    if (!assertion) {
-      self.emitter.emitEvent('error', [
-        'No assertion was received'
-      ]);
-    }
-
-    var http = new XMLHttpRequest();
-    var body = JSON.stringify({
-      audience: self.audience,
-      assertion: assertion
-    });
-
-    if (self.timeout) {
-      var timeoutInstance = setTimeout(function() {
-        self.emitter.emitEvent('error', [
-          'The request for a token timed out after ' + self.timeout + ' seconds'
-        ]);
-      }, self.timeout * 1000);
-    }
-
-    http.open('POST', self.url, true);
-    http.setRequestHeader('Content-type', 'application/json');
-    http.onreadystatechange = function() {
-
-      // Clear the timeout
-      if (self.timeout && timeoutInstance) {
-        clearTimeout(timeoutInstance);
-      }
-
-      if (http.readyState == 4 && http.status == 200) {
-        var data = JSON.parse(http.responseText);
-
-        // User exists
-        if (data.user) {
-          self.storage.set(data.user);
-          self.emitter.emitEvent('login', [data.user]);
-          self.emitter.emitEvent('verified', [data.user]);
-        }
-
-        // Email valid, user does not exist
-        if (data.email && !data.user) {
-          // TODO: SHOW UI FOR CREATE!!!!
-          console.log('Need to create user');
-        }
-
-        if (data.err) {
-          self.emitter.emitEvent('error', [data.err]);
-        }
-
-      }
-
-      // Some other error
-      else if (http.readyState === 4 && http.status && (http.status >= 400 || http.status < 200)) {
-        self.emitter.emitEvent('error', [http.responseText]);
-      }
-
-      // No response
-      else if (http.readyState === 4) {
-        self.emitter.emitEvent('error', ['Looks like ' + self.urls.authenticate + ' is not responding...']);
-      }
-
-    };
-
-    http.send(body);
-
-  }
-
   self.login = function() {
 
     // Restore login state from local storage!
@@ -166,7 +93,78 @@ window.WebmakerAuthClient = function(options) {
 
     // If it does not exist, we need to -actually- log in.
     else {
-      navigator.id.get(authenticate);
+      navigator.id.get(function(assertion) {
+        var data = {
+          audience: self.audience,
+          assertion: assertion
+        };
+
+        if (!assertion) {
+          self.emitter.emitEvent('error', [
+            'No assertion was received'
+          ]);
+        }
+
+        var http = new XMLHttpRequest();
+        var body = JSON.stringify({
+          audience: self.audience,
+          assertion: assertion
+        });
+
+        if (self.timeout) {
+          var timeoutInstance = setTimeout(function() {
+            self.emitter.emitEvent('error', [
+              'The request for a token timed out after ' + self.timeout + ' seconds'
+            ]);
+          }, self.timeout * 1000);
+        }
+
+        http.open('POST', self.url, true);
+        http.setRequestHeader('Content-type', 'application/json');
+        http.onreadystatechange = function() {
+
+          // Clear the timeout
+          if (self.timeout && timeoutInstance) {
+            clearTimeout(timeoutInstance);
+          }
+
+          if (http.readyState == 4 && http.status == 200) {
+            var data = JSON.parse(http.responseText);
+
+            // User exists
+            if (data.user) {
+              self.storage.set(data.user);
+              self.emitter.emitEvent('login', [data.user]);
+              self.emitter.emitEvent('verified', [data.user]);
+            }
+
+            // Email valid, user does not exist
+            if (data.email && !data.user) {
+              // TODO: SHOW UI FOR CREATE!!!!
+              console.log('Need to create user');
+            }
+
+            if (data.err) {
+              self.emitter.emitEvent('error', [data.err]);
+            }
+
+          }
+
+          // Some other error
+          else if (http.readyState === 4 && http.status && (http.status >= 400 || http.status < 200)) {
+            self.emitter.emitEvent('error', [http.responseText]);
+          }
+
+          // No response
+          else if (http.readyState === 4) {
+            self.emitter.emitEvent('error', ['Looks like ' + self.urls.authenticate + ' is not responding...']);
+          }
+
+        };
+
+        http.send(body);
+
+      });
     }
 
   };
