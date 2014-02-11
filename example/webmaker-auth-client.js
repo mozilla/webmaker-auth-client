@@ -55,8 +55,6 @@ window.WebmakerAuthClient = function(options) {
         var data = JSON.parse(http.responseText);
         var storedUserData = self.storage.get();
 
-        console.log(data);
-
         // Email is the same as response.
         if (email && data.email === email) {
           self.emitter.emitEvent('login', [storedUserData]);

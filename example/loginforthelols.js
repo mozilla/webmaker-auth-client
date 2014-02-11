@@ -18,10 +18,10 @@ app.use(express.urlencoded());
 app.post('/api/user/authenticate', function(req, res, next) {
   res.json({
     email: 'floog@goop.com',
-    user: {
-      username: 'floogal',
-      email: 'floog@goop.com'
-    }
+    // user: {
+    //   username: 'floogal',
+    //   email: 'floog@goop.com'
+    // }
   })
 });
 
