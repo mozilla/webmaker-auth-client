@@ -68,12 +68,9 @@ module.exports = function(options) {
     authenticate: function(req, res) {
 
       var hReq = hyperquest.post(self.loginURL + "/api/user/authenticate")
-
-      // TODO: figure out how to send a POST body in Hyperquest
-
       hReq.on("error", authenticateCallback);
       hReq.on("response", function(resp) {
-        if ( resp.statusCode !== 200 ) {
+        if (resp.statusCode !== 200) {
           return res.json(500, {
             error: "There was an error on the login server"
           });
@@ -98,19 +95,23 @@ module.exports = function(options) {
           authenticateCallback(null, req, res, json);
         });
       });
+      hReq.end(JSON.stringify({
+        assertion: req.body.assertion,
+        audience: req.body.audience
+      }), "utf8" );
     },
     verify: function(req, res) {
-      if ( !req.body.email ) {
+      if (!req.body.email) {
         return res.send(200, {
           error: "You must send an email to verify"
         });
       }
-      if ( !req.session.email && !req.session.user ) {
+      if (!req.session.email && !req.session.user) {
         return res.send(200, {
           error: "No Session"
         });
       }
-      if ( req.session.email !== req.body.email ) {
+      if (req.session.email !== req.body.email) {
         res.send(200, {
           error: "Session set, email mismatch",
           user: req.session.user
@@ -123,12 +124,9 @@ module.exports = function(options) {
     },
     create: function(req, res) {
       var hReq = hyperquest.post(self.loginURL + "/api/user/create");
-
-      // TODO: figure out how to send a POST body in Hyperquest
-
       hReq.on("error", authenticateCallback);
       hReq.on("response", function(resp) {
-        if ( resp.statusCode !== 200 ) {
+        if (resp.statusCode !== 200) {
           return res.json(500, {
             error: "There was an error on the login server"
           });
@@ -160,6 +158,9 @@ module.exports = function(options) {
           });
         });
       });
+      hReq.end(JSON.stringify({
+        user: req.body.user
+      }), "utf8");
     }
   };
 };
