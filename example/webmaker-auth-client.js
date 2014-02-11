@@ -64,7 +64,7 @@ window.WebmakerAuthClient = function(options) {
         }
 
         // Email is not the same, but is a cookie
-        else if (email !== data.email && data.user) {
+        else if (data.user) {
           self.storage.set(data.user);
           self.emitter.emitEvent('login', [data.user]);
         }
@@ -169,6 +169,10 @@ window.WebmakerAuthClient = function(options) {
   };
 
   self.logout = function() {
+    var http = new XMLHttpRequest();
+    http.open('POST', self.urls.logout, true);
+    http.send(null);
+
     self.emitter.emitEvent('logout');
     self.storage.clear();
   };

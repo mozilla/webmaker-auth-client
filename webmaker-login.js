@@ -148,6 +148,10 @@ module.exports = function(options) {
       hReq.end(JSON.stringify({
         user: req.body.user
       }), "utf8");
+    },
+    logout: function(req, res) {
+      req.session = null;
+      res.send();
     }
   };
 };
