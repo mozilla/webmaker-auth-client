@@ -101,26 +101,16 @@ module.exports = function(options) {
       }), "utf8" );
     },
     verify: function(req, res) {
-      if (!req.body.email) {
-        return res.send(200, {
-          error: "You must send an email to verify"
-        });
-      }
       if (!req.session.email && !req.session.user) {
         return res.send(200, {
           error: "No Session"
         });
       }
-      if (req.session.email !== req.body.email) {
-        res.send(200, {
-          error: "Session set, email mismatch",
-          user: req.session.user
-        });
-      } else {
-        res.send(200, {
-          user: req.session.user
-        });
-      }
+      res.send(200, {
+        status: "Valid Session",
+        user: req.session.user,
+        email: req.session.email
+      });
     },
     create: function(req, res, next) {
       var hReq = hyperquest.post(self.loginURL + "/api/user/create");
