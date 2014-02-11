@@ -49,6 +49,9 @@ window.WebmakerAuthClient = function(options) {
 
   self.logout = function() {
     navigator.id.logout();
+    // console.log('hi');
+    // self.emitter.emitEvent('logout');
+    // self.storage.clear();
   };
 
   self.storage = {
@@ -83,7 +86,7 @@ window.WebmakerAuthClient = function(options) {
     }
 
     navigator.id.watch({
-      loggedInUser: null,
+      //loggedInUser: null,
       onlogin: function(assertion) {
 
         var data = {
