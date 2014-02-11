@@ -16,7 +16,7 @@ app.post('/api/user/authenticate', function(req, res, next) {
     email: 'floog@goop.com',
     user: {
       username: 'floogal',
-      email: 'sloogal'
+      email: 'floog@goop.com'
     }
   })
 });
