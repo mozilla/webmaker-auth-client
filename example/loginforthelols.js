@@ -6,6 +6,10 @@ Habitat.load();
 var env = new Habitat();
 var app = express();
 
+if(!env.get('LOGIN_PORT')) {
+  env.set('LOGIN_PORT', 3000);
+}
+
 app.use(express.logger('dev'));
 app.use(express.compress());
 app.use(express.json());

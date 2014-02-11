@@ -6,16 +6,15 @@ Habitat.load();
 
 var env = new Habitat();
 var app = express();
-
-// Default!
-if(!env.get('PORT')) {
-  env.set('PORT', 5000);
-}
-
 var login = new WebmakerLogin({
   loginURL: env.get('LOGIN_URL'),
   secretKey: env.get('SECRET_KEY')
 });
+
+// Default!
+if(!env.get('PORT_2')) {
+  env.set('PORT_2', 6000);
+}
 
 app.use(express.logger('dev'));
 app.use(express.compress());
@@ -31,6 +30,6 @@ app.post('/verify', login.handlers.verify);
 app.post('/authenticate', login.handlers.authenticate);
 app.post('/create', login.handlers.create);
 
-app.listen(env.get('PORT'), function() {
-  console.log('App listening on ' + env.get('PORT'));
+app.listen(env.get('PORT_2'), function() {
+  console.log('App 2 listening on ' + env.get('PORT_2'));
 });

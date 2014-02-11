@@ -10,8 +10,8 @@ module.exports = function (grunt) {
     },
     watch: {
       js: {
-        files: ['example/**/*.js'],
-        tasks: ['shell:fakeLogin', 'shell:fakeApp']
+        files: ['example/**/*.js', 'webmaker-login.js'],
+        tasks: ['shell:fakeLogin', 'shell:fakeApp', 'shell:fakeApp2']
       }
     },
     shell: {
@@ -26,6 +26,12 @@ module.exports = function (grunt) {
           async: true
         },
         command: 'node example/server.js'
+      },
+      fakeApp2: {
+        options: {
+          async: true
+        },
+        command: 'node example/server-2.js'
       }
     },
     jshint: {
@@ -56,7 +62,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('default', [ 'shell:fakeLogin', 'shell:fakeApp', 'watch']);
+  grunt.registerTask('default', [ 'shell:fakeLogin', 'shell:fakeApp',  'shell:fakeApp2', 'watch']);
 
   // Clean code before a commit
   grunt.registerTask('clean', ['jsbeautifier:modify', 'jshint']);
