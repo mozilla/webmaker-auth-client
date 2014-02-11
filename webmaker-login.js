@@ -1,5 +1,6 @@
 var express = require('express');
 var hyperquest = require('hyperquest');
+
 var expressPersona = require('express-persona');
 var url = require('url');
 
@@ -43,22 +44,127 @@ module.exports = function(options) {
     });
   };
 
+  function authenticateCallback( err, req, res, json ) {
+    if ( err ) {
+      return res.json(500, {
+        error: err
+      });
+    }
+    if ( !json ) {
+      return res.json(500, {
+        error: "The Login server sent an invalid response"
+      });
+    }
+    if ( json.email && json.user ) {
+      req.session.user = json.user;
+      req.session.email = json.email;
+      res.json(200, {
+        user: json.user,
+        email: json.email
+      });
+    } else {
+      res.json(200, {
+        error: "No user for email address",
+        email: json.email
+      });
+    }
+  }
+
   self.handlers = {
-    get: function(req, res) {
-      res.send('USER DATA LOLS');
+    authenticate: function(req, res) {
+      var hReq = hyperquest.post(self.loginURL + "/api/user/authenticate")
+
+      // TODO: figure out how to send a POST body in Hyperquest
+
+      hReq.on("error", authenticateCallback);
+      hReq.on("response", function(resp) {
+        if ( resp.statusCode !== 200 ) {
+          return res.json(500, {
+            error: "There was an error on the login server"
+          });
+        }
+
+        var bodyParts = []
+        var bytes = 0;
+        resp.on("data", function (c) {
+          bodyParts.push(c);
+          bytes += c.length;
+        });
+        resp.on("end", function() {
+          var body = Buffer.concat(bodyParts, bytes).toString("utf8");
+          var json;
+
+          try {
+            json = JSON.parse(body);
+          } catch (ex) {
+            return authenticateCallback(ex);
+          }
+
+          authenticateCallback(null, req, res, json);
+        });
+      });
+    },
+    verify: function(req, res) {
+      if ( !req.body.email ) {
+        return res.send(200, {
+          error: "You must send an email to verify"
+        });
+      }
+      if ( !req.session.email && !req.session.user ) {
+        return res.send(200, {
+          error: "No Session"
+        });
+      }
+      if ( req.session.email !== req.body.email ) {
+        res.send(200, {
+          error: "Session set, email mismatch"
+          user: req.session.user
+        });
+      } else {
+        res.send(200, {
+          user: req.session.user
+        });
+      }
     },
     create: function(req, res) {
-      res.send('CREATE USER LOLS');
+      var hReq = hyperquest.post(self.loginURL + "/api/user/create");
+
+      // TODO: figure out how to send a POST body in Hyperquest
+
+      hReq.on("error", authenticateCallback);
+      hReq.on("response", function(resp) {
+        if ( resp.statusCode !== 200 ) {
+          return res.json(500, {
+            error: "There was an error on the login server"
+          });
+        }
+
+        var bodyParts = []
+        var bytes = 0;
+        resp.on("data", function (c) {
+          bodyParts.push(c);
+          bytes += c.length;
+        });
+        resp.on("end", function() {
+          var body = Buffer.concat(bodyParts, bytes).toString("utf8");
+          var json;
+
+          try {
+            json = JSON.parse(body);
+          } catch (ex) {
+            return res.json(500, {
+              error: "There was an error parsing the response from the Login Server"
+            });
+          }
+
+          req.session.user = json.user;
+          req.session.email = json.email;
+          res.json(200, {
+            user: json.user,
+            email: json.email
+          });
+        });
+      });
     }
   };
-
-  self.utils = {
-    getUser: function(id, cb) {
-      // get a user
-    },
-    isAdmin: function(id, cb) {
-      // check if is admin
-    }
-  };
-
 };
