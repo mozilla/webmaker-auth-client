@@ -36,6 +36,11 @@ window.WebmakerAuthClient = function(options) {
 
   self.verify = function() {
 
+    if (self.storage.get()) {
+      self.emitter.emitEvent('login', [self.storage.get()]);
+      self.emitter.emitEvent('restored', [self.storage.get()]);
+    }
+
     var email = self.storage.get('email');
 
     var http = new XMLHttpRequest();
@@ -49,6 +54,8 @@ window.WebmakerAuthClient = function(options) {
       if (http.readyState == 4 && http.status == 200) {
         var data = JSON.parse(http.responseText);
         var storedUserData = self.storage.get();
+
+        console.log(data);
 
         // Email is the same as response.
         if (email && data.email === email) {
@@ -86,89 +93,78 @@ window.WebmakerAuthClient = function(options) {
   }
 
   self.login = function() {
+    navigator.id.get(function(assertion) {
+      var data = {
+        audience: self.audience,
+        assertion: assertion
+      };
 
-    // Restore login state from local storage!
-    // First, check if login exists.
-    if (self.storage.get()) {
-      self.emitter.emitEvent('login', [self.storage.get()]);
-      self.emitter.emitEvent('restored', [self.storage.get()]);
-    }
+      if (!assertion) {
+        self.emitter.emitEvent('error', [
+          'No assertion was received'
+        ]);
+      }
 
-    // If it does not exist, we need to -actually- log in.
-    else {
-      navigator.id.get(function(assertion) {
-        var data = {
-          audience: self.audience,
-          assertion: assertion
-        };
-
-        if (!assertion) {
-          self.emitter.emitEvent('error', [
-            'No assertion was received'
-          ]);
-        }
-
-        var http = new XMLHttpRequest();
-        var body = JSON.stringify({
-          audience: self.audience,
-          assertion: assertion
-        });
-
-        if (self.timeout) {
-          var timeoutInstance = setTimeout(function() {
-            self.emitter.emitEvent('error', [
-              'The request for a token timed out after ' + self.timeout + ' seconds'
-            ]);
-          }, self.timeout * 1000);
-        }
-
-        http.open('POST', self.urls.authenticate, true);
-        http.setRequestHeader('Content-type', 'application/json');
-        http.onreadystatechange = function() {
-
-          // Clear the timeout
-          if (self.timeout && timeoutInstance) {
-            clearTimeout(timeoutInstance);
-          }
-
-          if (http.readyState == 4 && http.status == 200) {
-            var data = JSON.parse(http.responseText);
-
-            // User exists
-            if (data.user) {
-              self.storage.set(data.user);
-              self.emitter.emitEvent('login', [data.user]);
-              self.emitter.emitEvent('verified', [data.user]);
-            }
-
-            // Email valid, user does not exist
-            if (data.email && !data.user) {
-              // TODO: SHOW UI FOR CREATE!!!!
-              console.log('Need to create user');
-            }
-
-            if (data.err) {
-              self.emitter.emitEvent('error', [data.err]);
-            }
-
-          }
-
-          // Some other error
-          else if (http.readyState === 4 && http.status && (http.status >= 400 || http.status < 200)) {
-            self.emitter.emitEvent('error', [http.responseText]);
-          }
-
-          // No response
-          else if (http.readyState === 4) {
-            self.emitter.emitEvent('error', ['Looks like ' + self.urls.authenticate + ' is not responding...']);
-          }
-
-        };
-
-        http.send(body);
-
+      var http = new XMLHttpRequest();
+      var body = JSON.stringify({
+        audience: self.audience,
+        assertion: assertion
       });
-    }
+
+      if (self.timeout) {
+        var timeoutInstance = setTimeout(function() {
+          self.emitter.emitEvent('error', [
+            'The request for a token timed out after ' + self.timeout + ' seconds'
+          ]);
+        }, self.timeout * 1000);
+      }
+
+      http.open('POST', self.urls.authenticate, true);
+      http.setRequestHeader('Content-type', 'application/json');
+      http.onreadystatechange = function() {
+
+        // Clear the timeout
+        if (self.timeout && timeoutInstance) {
+          clearTimeout(timeoutInstance);
+        }
+
+        if (http.readyState == 4 && http.status == 200) {
+          var data = JSON.parse(http.responseText);
+
+          // User exists
+          if (data.user) {
+            self.storage.set(data.user);
+            self.emitter.emitEvent('login', [data.user]);
+            self.emitter.emitEvent('verified', [data.user]);
+          }
+
+          // Email valid, user does not exist
+          if (data.email && !data.user) {
+            // TODO: SHOW UI FOR CREATE!!!!
+            console.log('Need to create user');
+          }
+
+          if (data.err) {
+            self.emitter.emitEvent('error', [data.err]);
+          }
+
+        }
+
+        // Some other error
+        else if (http.readyState === 4 && http.status && (http.status >= 400 || http.status < 200)) {
+          self.emitter.emitEvent('error', [http.responseText]);
+        }
+
+        // No response
+        else if (http.readyState === 4) {
+          self.emitter.emitEvent('error', ['Looks like ' + self.urls.authenticate + ' is not responding...']);
+        }
+
+      };
+
+      http.send(body);
+
+    });
 
   };
 

@@ -10,7 +10,7 @@ module.exports = function(options) {
 
   var self = this;
 
-  self.loginURL = options.loginURL || 'http://testuser:password@login.mofostaging.org';
+  self.loginURL = options.loginURL || 'http://localhost:3000';
 
   self.maxAge = options.maxAge || 2678400000; // 31 days. Persona saves session data for 1 month
   self.forceSSL = options.forceSSL || false;
@@ -19,7 +19,7 @@ module.exports = function(options) {
 
   // No user-defined login URL
   if (!options.loginURL) {
-    console.error('WARNING (webmaker-loginapi): loginURL was not passed into configuration. Defaulting to http://testuser:password@login.mofostaging.org.');
+    console.error('WARNING (webmaker-loginapi): loginURL was not passed into configuration. Defaulting to http://localhost:3000');
   }
 
   self.cookieParser = function() {

@@ -13,7 +13,7 @@ var login = new WebmakerLogin({
 
 // Default!
 if(!env.get('PORT_2')) {
-  env.set('PORT_2', 6000);
+  env.set('PORT_2', 5050);
 }
 
 app.use(express.logger('dev'));
