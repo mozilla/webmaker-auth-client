@@ -1,9 +1,6 @@
 var express = require('express');
 var hyperquest = require('hyperquest');
 
-var expressPersona = require('express-persona');
-var url = require('url');
-
 module.exports = function(options) {
 
   options = options || {};
