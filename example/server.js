@@ -19,6 +19,8 @@ app.use(express.urlencoded());
 app.use(login.cookieParser());
 app.use(login.cookieSession());
 
+app.use(express.static('./example'));
+
 app.post('/verify', login.handlers.verify);
 app.post('/authenticate', login.handlers.authenticate);
 app.post('/create', login.handlers.create);
