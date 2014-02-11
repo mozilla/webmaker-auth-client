@@ -65,10 +65,10 @@ module.exports = function(options) {
   }
 
   self.handlers = {
-    authenticate: function(req, res) {
+    authenticate: function(req, res, next) {
 
       var hReq = hyperquest.post(self.loginURL + "/api/user/authenticate")
-      hReq.on("error", authenticateCallback);
+      hReq.on("error", next);
       hReq.on("response", function(resp) {
         if (resp.statusCode !== 200) {
           return res.json(500, {
