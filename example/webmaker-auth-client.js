@@ -5,7 +5,7 @@ window.WebmakerAuthClient = function(options) {
 
   self.host = options.host || '';
   self.urls = options.urls || {
-    autheticate: self.host + '/authenticate',
+    authenticate: self.host + '/authenticate',
     create: self.host + '/create',
     verify: self.host + '/verify',
     logout: self.host + '/logout'
@@ -34,11 +34,13 @@ window.WebmakerAuthClient = function(options) {
     self.emitter.removeListener(event, cb);
   };
 
-  self.verify = function(email) {
+  self.verify = function() {
+
+    var email = self.storage.get('email');
 
     var http = new XMLHttpRequest();
     var body = JSON.stringify({
-      email: self.storage.get('email')
+      email: email
     });
 
     http.open('POST', self.urls.verify, true);
@@ -49,21 +51,22 @@ window.WebmakerAuthClient = function(options) {
         var storedUserData = self.storage.get();
 
         // Email is the same as response.
-        if (data.email === self.storage.get('email')) {
+        if (email && data.email === email) {
           self.emitter.emitEvent('login', [storedUserData]);
           self.emitter.emitEvent('verified', [storedUserData]);
         }
 
-        // No session
-        else if (data.user) {
+        // Email is not the same, but is a cookie
+        else if (email !== data.email && data.user) {
           self.storage.set(data.user);
           self.emitter.emitEvent('login', [data.user]);
         }
 
-        // Email is not the same, but there is user data
-        else if (data.error) {
+        // No cookie
+        else if (email && data.error) {
           self.logout();
         }
+
       }
 
       // Some other error
@@ -119,7 +122,7 @@ window.WebmakerAuthClient = function(options) {
           }, self.timeout * 1000);
         }
 
-        http.open('POST', self.url, true);
+        http.open('POST', self.urls.authenticate, true);
         http.setRequestHeader('Content-type', 'application/json');
         http.onreadystatechange = function() {
 
