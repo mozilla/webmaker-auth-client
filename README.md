@@ -28,6 +28,7 @@ var auth = new WebmakerAuthClient({
     verify: '/verify',
     logout: '/logout'
   },
+  csrfToken: 'YOURCSRFTOKEN',
   audience: window.location.origin,
   prefix: 'webmaker-', // for local storage
   timeout: 10,

@@ -37,6 +37,7 @@
       self.prefix = options.prefix || 'webmaker-';
       self.timeout = options.timeout || 10;
       self.localStorageKey = self.prefix + 'login';
+      self.csrfToken = options.csrfToken;
 
       // Create New User Modal
       self.handleNewUserUI = options.handleNewUserUI === false ? false : true;
@@ -100,6 +101,7 @@
 
         http.open('POST', self.urls.create, true);
         http.setRequestHeader('Content-type', 'application/json');
+        http.setRequestHeader('X-CSRF-Token', self.csrfToken);
         http.onreadystatechange = function() {
           if (http.readyState == 4 && http.status == 200) {
             var data = JSON.parse(http.responseText);
@@ -145,6 +147,7 @@
 
         http.open('POST', self.urls.verify, true);
         http.setRequestHeader('Content-type', 'application/json');
+        http.setRequestHeader('X-CSRF-Token', self.csrfToken);
         http.onreadystatechange = function() {
           if (http.readyState == 4 && http.status == 200) {
             var data = JSON.parse(http.responseText);
@@ -213,6 +216,7 @@
 
           http.open('POST', self.urls.authenticate, true);
           http.setRequestHeader('Content-type', 'application/json');
+          http.setRequestHeader('X-CSRF-Token', self.csrfToken);
           http.onreadystatechange = function() {
 
             // Clear the timeout
@@ -267,6 +271,7 @@
       self.logout = function() {
         var http = new XMLHttpRequest();
         http.open('POST', self.urls.logout, true);
+        http.setRequestHeader('X-CSRF-Token', self.csrfToken);
         http.send(null);
 
         self.emitter.emitEvent('logout');
