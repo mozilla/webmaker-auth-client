@@ -4,10 +4,6 @@
 
     return function WebmakerAuthClient(options) {
 
-      if (!window.navigator.id) {
-        console.error('No persona found. Did you include include.js?');
-      }
-
       if (!window.localStorage) {
         console.error('Local storage must be supported for instant login.');
       }
@@ -188,7 +184,12 @@
       }
 
       self.login = function() {
-        navigator.id.get(function(assertion) {
+
+        if (!window.navigator.id) {
+          console.error('No persona found. Did you include include.js?');
+        }
+
+        window.navigator.id.get(function(assertion) {
           var data = {
             audience: self.audience,
             assertion: assertion
