@@ -25,6 +25,16 @@ app.post('/api/user/authenticate', function(req, res, next) {
   })
 });
 
+app.post('/api/user/create', function(req, res, next) {
+  res.json({
+    email: 'floog@goop.com',
+    user: {
+      username: 'floogal',
+      email: 'floog@goop.com'
+    }
+  })
+});
+
 app.listen(env.get('LOGIN_PORT'), function() {
   console.log('App listening on ' + env.get('LOGIN_PORT'));
 });

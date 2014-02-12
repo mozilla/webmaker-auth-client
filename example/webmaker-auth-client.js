@@ -1,8 +1,21 @@
 window.WebmakerAuthClient = function(options) {
+
+  if (!window.navigator.id) {
+    console.error('No persona found. Did you include include.js?');
+  }
+
+  if (!window.localStorage) {
+    console.error('Local storage must be supported for instant login.');
+  }
+
   var self = this;
 
   options = options || {};
 
+  // For handling events
+  self.emitter = new EventEmitter();
+
+  // Config
   self.host = options.host || '';
   self.urls = options.urls || {
     authenticate: self.host + '/authenticate',
@@ -13,18 +26,51 @@ window.WebmakerAuthClient = function(options) {
   self.audience = options.audience || window.location.origin;
   self.prefix = options.prefix || 'webmaker-';
   self.timeout = options.timeout || 10;
-
   self.localStorageKey = self.prefix + 'login';
 
-  if (!window.navigator.id) {
-    console.error('No persona found. Did you include include.js?');
-  }
+  // Create New User Modal
+  self.handleNewUserUI = options.handleNewUserUI === false ? false : true;
 
-  if (!window.localStorage) {
-    console.error('Local storage must be supported for instant login.');
-  }
+  // You can override any of these if necessary
+  self.modal = {};
+  self.modal.element = document.getElementById('webmaker-login-new-user');
+  self.modal.dismissSelector = '[data-dismiss]';
+  self.modal.createSelector = '.create-user';
+  self.modal.createBtnOnClick = function(){};
 
-  self.emitter = new EventEmitter();
+  self.modal.setup = function(assertion, email) {
+    var createBtn = self.modal.element.querySelector(self.modal.createSelector);
+    var closeBtns = self.modal.element.querySelectorAll(self.modal.dismissSelector);
+    createBtn.removeEventListener('click', self.modal.createBtnOnClick, false);
+    self.modal.createBtnOnClick = function() {
+      self.createUser({
+        assertion: assertion,
+        user: {
+          username: self.modal.element.querySelector('[name="username"]').value,
+          mailingList: self.modal.element.querySelector('[name="mailingList"]').value
+        }
+      });
+      self.modal.close();
+    };
+
+    for (var i = 0; i < closeBtns.length; i++) {
+      closeBtns[i].removeEventListener('click', self.modal.close, false);
+      closeBtns[i].addEventListener('click', self.modal.close, false);
+    }
+    createBtn.addEventListener('click', self.modal.createBtnOnClick, false);
+  };
+
+  self.modal.open = function() {
+    self.modal.element.classList.add('in');
+    self.modal.element.style.display = 'block';
+    self.modal.element.setAttribute('aria-hidden', false)
+  };
+
+  self.modal.close = function() {
+    self.modal.element.classList.remove('in');
+    self.modal.element.style.display = 'none';
+    self.modal.element.setAttribute('aria-hidden', true);
+  };
 
   self.on = function(event, cb) {
     self.emitter.addListener(event, cb);
@@ -34,11 +80,52 @@ window.WebmakerAuthClient = function(options) {
     self.emitter.removeListener(event, cb);
   };
 
+  self.createUser = function(data, callback) {
+
+    var http = new XMLHttpRequest();
+    var body = JSON.stringify({
+      assertion: data.assertion,
+      user: data.user
+    });
+
+    http.open('POST', self.urls.create, true);
+    http.setRequestHeader('Content-type', 'application/json');
+    http.onreadystatechange = function() {
+      if (http.readyState == 4 && http.status == 200) {
+        var data = JSON.parse(http.responseText);
+
+        // User creation successful
+        if (data.user) {
+          self.storage.set(data.user);
+          self.emitter.emitEvent('login', [data.user, 'user created']);
+        }
+
+        else {
+          self.emitter.emitEvent('error', [http.responseText]);
+        }
+
+      }
+
+      // Some other error
+      else if (http.readyState === 4 && http.status && (http.status >= 400 || http.status < 200)) {
+        self.emitter.emitEvent('error', [http.responseText]);
+      }
+
+      // No response
+      else if (http.readyState === 4) {
+        self.emitter.emitEvent('error', ['Looks like ' + self.urls.create + ' is not responding...']);
+      }
+
+    };
+
+    http.send(body);
+
+  };
+
   self.verify = function() {
 
     if (self.storage.get()) {
-      self.emitter.emitEvent('login', [self.storage.get()]);
-      self.emitter.emitEvent('restored', [self.storage.get()]);
+      self.emitter.emitEvent('login', [self.storage.get(), 'restored']);
     }
 
     var email = self.storage.get('email');
@@ -57,18 +144,17 @@ window.WebmakerAuthClient = function(options) {
 
         // Email is the same as response.
         if (email && data.email === email) {
-          self.emitter.emitEvent('login', [storedUserData]);
           self.emitter.emitEvent('verified', [storedUserData]);
         }
 
         // Email is not the same, but is a cookie
         else if (data.user) {
           self.storage.set(data.user);
-          self.emitter.emitEvent('login', [data.user]);
+          self.emitter.emitEvent('login', [data.user, 'email mismatch']);
         }
 
         // No cookie
-        else if (email && data.error) {
+        else if (email && !data.user) {
           self.logout();
         }
 
@@ -132,14 +218,18 @@ window.WebmakerAuthClient = function(options) {
           // User exists
           if (data.user) {
             self.storage.set(data.user);
-            self.emitter.emitEvent('login', [data.user]);
-            self.emitter.emitEvent('verified', [data.user]);
+            self.emitter.emitEvent('login', [data.user, 'authenticate']);
           }
 
           // Email valid, user does not exist
           if (data.email && !data.user) {
-            // TODO: SHOW UI FOR CREATE!!!!
-            console.log('Need to create user');
+            self.emitter.emitEvent('newuser', [assertion, data.email]);
+
+            // If handleNewUserUI is true, show the modal with correct data
+            if (self.handleNewUserUI) {
+              self.modal.setup(assertion, data.email);
+              self.modal.open();
+            }
           }
 
           if (data.err) {
@@ -175,6 +265,7 @@ window.WebmakerAuthClient = function(options) {
     self.storage.clear();
   };
 
+  // Utilities for accessing local storage
   self.storage = {
     get: function(key) {
       var data = JSON.parse(localStorage.getItem(self.localStorageKey));

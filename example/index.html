@@ -4,20 +4,65 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta charset="utf-8">
   <title>Persona example</title>
+  <link href="https://s3-us-west-2.amazonaws.com/makerstrap/makerstrap.complete.min.css" rel="stylesheet">
 
 </head>
 <body>
 
-  <div class="main">
+  <!-- Modal -->
+  <div
+    class="modal fade"
+    id="webmaker-login-new-user"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="createNewWebmakerUser"
+    aria-hidden="true">
+
+    <div class="modal-backdrop" style="opacity: 0.5"></div>
+
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h3 class="modal-title" id="myModalLabel">Welcome, <span class="email"></span></h3>
+        </div>
+        <div class="modal-body">
+          <form class="form">
+            <div class="form-group">
+              <label>Choose a username</label>
+              <input name="username" class="form-control">
+            </div>
+            <div class="checkbox">
+              <label>
+                <input name="mailingList" type="checkbox"> Send me email updates about Mozilla Webmaker and other projects
+              </label>
+            </div>
+            <div class="checkbox">
+              <label>
+                <input name="agree" type="checkbox"> I agree to your terms and conditions
+              </label>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button class="create-user btn btn-primary" type="button">Create Account</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
 
     <h1 class="welcome">Welcome, <span class="username"></span></h1>
 
-    <button class="login">Login</button>
-    <button class="logout">Logout</button>
+    <button class="btn btn-primary login">Login</button>
+    <button class="btn btn-warning logout">Logout</button>
 
   </div>
 
   <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+
   <script src="https://login.persona.org/include.js"></script>
   <script src="../bower_components/eventEmitter/EventEmitter.js"></script>
   <script src="../webmaker-auth-client.js"></script>
@@ -28,16 +73,18 @@
 
     var auth = new WebmakerAuthClient();
 
-    auth.on('foo', function() {
-      console.log('foo');
+    auth.on('login', function(data, message) {
+      console.log('login', message);
+      usernameEl.innerHTML = data.email;
     });
 
-    auth.on('login', function(data) {
-      console.log('login', data);
+    auth.on('verified', function(data) {
+      console.log('verified');
       usernameEl.innerHTML = data.email;
     });
 
     auth.on('logout', function() {
+      console.log('logout');
       usernameEl.innerHTML = '';
     });
 

@@ -36,6 +36,7 @@ module.exports = function(options) {
   };
 
   function authenticateCallback( err, req, res, json ) {
+
     if ( err ) {
       return res.json(500, {
         error: err
