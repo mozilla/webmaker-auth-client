@@ -11,17 +11,23 @@ window.WebmakerAuthClient = function(options) {
   var self = this;
 
   options = options || {};
+  options.paths = options.paths || {};
 
   // For handling events
   self.emitter = new EventEmitter();
 
   // Config
   self.host = options.host || '';
-  self.urls = options.urls || {
-    authenticate: self.host + '/authenticate',
-    create: self.host + '/create',
-    verify: self.host + '/verify',
-    logout: self.host + '/logout'
+  self.paths = options.paths || {};
+  self.paths.authenticate = options.paths.authenticate || '/authenticate';
+  self.paths.create = options.paths.create || '/create';
+  self.paths.verify = options.paths.verify || '/verify';
+  self.paths.logout = options.paths.logout || '/logout';
+  self.urls = {
+    authenticate: self.host + self.paths.authenticate,
+    create: self.host + self.paths.create,
+    verify: self.host + self.paths.verify,
+    logout: self.host + self.paths.logout
   };
   self.audience = options.audience || window.location.origin;
   self.prefix = options.prefix || 'webmaker-';
