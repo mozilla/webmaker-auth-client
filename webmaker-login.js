@@ -43,10 +43,15 @@ module.exports = function(options) {
     }
     if ( !json ) {
       return res.json(500, {
-        error: "The Login server sent an invalid response"
+        error: 'The Login server sent an invalid response'
       });
     }
-    if ( json.email && json.user ) {
+    if ( json.error ) {
+      return res.json(200, {
+        error: json.error
+      });
+    }
+    if ( json.user ) {
       req.session.user = json.user;
       req.session.email = json.email;
       res.json(200, {
@@ -55,7 +60,7 @@ module.exports = function(options) {
       });
     } else {
       res.json(200, {
-        error: "No user for email address",
+        error: 'No user for email address',
         email: json.email
       });
     }
@@ -64,23 +69,23 @@ module.exports = function(options) {
   self.handlers = {
     authenticate: function(req, res, next) {
 
-      var hReq = hyperquest.post(self.loginURL + "/api/user/authenticate")
-      hReq.on("error", next);
-      hReq.on("response", function(resp) {
+      var hReq = hyperquest.post(self.loginURL + '/api/user/authenticate');
+      hReq.on('error', next);
+      hReq.on('response', function(resp) {
         if (resp.statusCode !== 200) {
           return res.json(500, {
-            error: "There was an error on the login server"
+            error: 'There was an error on the login server'
           });
         }
 
         var bodyParts = []
         var bytes = 0;
-        resp.on("data", function (c) {
+        resp.on('data', function (c) {
           bodyParts.push(c);
           bytes += c.length;
         });
-        resp.on("end", function() {
-          var body = Buffer.concat(bodyParts, bytes).toString("utf8");
+        resp.on('end', function() {
+          var body = Buffer.concat(bodyParts, bytes).toString('utf8');
           var json;
 
           try {
@@ -92,48 +97,49 @@ module.exports = function(options) {
           authenticateCallback(null, req, res, json);
         });
       });
+      hReq.setHeader('Content-Type', 'application/json');
       hReq.end(JSON.stringify({
         assertion: req.body.assertion,
         audience: req.body.audience
-      }), "utf8" );
+      }), 'utf8');
     },
     verify: function(req, res) {
       if (!req.session.email && !req.session.user) {
         return res.send(200, {
-          status: "No Session"
+          status: 'No Session'
         });
       }
       res.send(200, {
-        status: "Valid Session",
+        status: 'Valid Session',
         user: req.session.user,
         email: req.session.email
       });
     },
     create: function(req, res, next) {
-      var hReq = hyperquest.post(self.loginURL + "/api/user/create");
-      hReq.on("error", next);
-      hReq.on("response", function(resp) {
+      var hReq = hyperquest.post(self.loginURL + '/api/user/create');
+      hReq.on('error', next);
+      hReq.on('response', function(resp) {
         if (resp.statusCode !== 200) {
           return res.json(500, {
-            error: "There was an error on the login server"
+            error: 'There was an error on the login server'
           });
         }
 
         var bodyParts = []
         var bytes = 0;
-        resp.on("data", function (c) {
+        resp.on('data', function (c) {
           bodyParts.push(c);
           bytes += c.length;
         });
-        resp.on("end", function() {
-          var body = Buffer.concat(bodyParts, bytes).toString("utf8");
+        resp.on('end', function() {
+          var body = Buffer.concat(bodyParts, bytes).toString('utf8');
           var json;
 
           try {
             json = JSON.parse(body);
           } catch (ex) {
             return res.json(500, {
-              error: "There was an error parsing the response from the Login Server"
+              error: 'There was an error parsing the response from the Login Server'
             });
           }
 
@@ -145,9 +151,10 @@ module.exports = function(options) {
           });
         });
       });
+      hReq.setHeader('Content-Type', 'application/json');
       hReq.end(JSON.stringify({
         user: req.body.user
-      }), "utf8");
+      }), 'utf8');
     },
     logout: function(req, res) {
       req.session = null;
