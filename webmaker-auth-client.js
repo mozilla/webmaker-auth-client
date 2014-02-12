@@ -305,7 +305,7 @@
 
   // AMD
   if (typeof define === 'function' && define.amd) {
-    define(['EventEmitter'], webmakerAuthClientDefinition);
+    define(['eventEmitter/EventEmitter'], webmakerAuthClientDefinition);
   }
 
   // Global
