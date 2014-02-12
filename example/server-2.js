@@ -1,6 +1,6 @@
 var express = require('express');
 var Habitat = require('habitat');
-var WebmakerLogin = require('../webmaker-login');
+var WebmakerLogin = require('webmaker-auth');
 
 Habitat.load();
 
@@ -24,7 +24,7 @@ app.use(express.urlencoded());
 app.use(login.cookieParser());
 app.use(login.cookieSession());
 
-app.use(express.static('./example'));
+app.use(express.static(__dirname + '/..'));
 
 app.post('/verify', login.handlers.verify);
 app.post('/authenticate', login.handlers.authenticate);
