@@ -92,6 +92,7 @@
         var http = new XMLHttpRequest();
         var body = JSON.stringify({
           assertion: data.assertion,
+          audience: self.audience,
           user: data.user
         });
 
