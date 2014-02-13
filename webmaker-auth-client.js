@@ -50,13 +50,24 @@
         var closeBtns = self.modal.element.querySelectorAll(self.modal.dismissSelector);
         createBtn.removeEventListener('click', self.modal.createBtnOnClick, false);
         self.modal.createBtnOnClick = function() {
+          var agreeInput = self.modal.element.querySelector('[name="agreeToTerms"]');
+          var usernameInput = self.modal.element.querySelector('[name="username"]');
+          var mailingListInput = self.modal.element.querySelector('[name="mailingList"]');
+          var errorMessage = self.modal.element.querySelector('.agree-error');
+
+          if (!agreeInput || !agreeInput.checked || !usernameInput.value) {
+            errorMessage && errorMessage.classList.remove('hidden');
+            return;
+          }
+
           self.createUser({
             assertion: assertion,
             user: {
-              username: self.modal.element.querySelector('[name="username"]').value,
-              mailingList: self.modal.element.querySelector('[name="mailingList"]').value
+              username: usernameInput.value,
+              mailingList: mailingListInput.checked
             }
           });
+          errorMessage && errorMessage.classList.add('hidden');
           self.modal.close();
         };
 
@@ -169,7 +180,6 @@
             else {
               self.emitter.emitEvent('verified', false);
             }
-
 
           }
 
