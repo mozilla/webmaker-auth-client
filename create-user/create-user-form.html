@@ -1,4 +1,3 @@
-<!-- Modal -->
 <div
   class="modal fade"
   id="webmaker-login-new-user"
@@ -18,10 +17,16 @@
       <div class="modal-body">
         <form class="form">
           <div class="form-group username-group">
-            <label for="username">Choose a username</label>
-            <input name="username" class="form-control" required>
-            <span class="help-block username-taken-error hidden">That username is taken.</span>
-            <span class="help-block username-required-error hidden">You must choose a username.</span>
+            <div class="row">
+              <div class="col-sm-6">
+                <label for="username">Choose a username</label>
+              </div>
+              <div class="col-sm-6">
+                <input name="username" class="form-control" required>
+                <span class="help-block username-taken-error hidden">That username is taken.</span>
+                <span class="help-block username-required-error hidden">You must choose a username.</span>
+              </div>
+            </div>
           </div>
           <div class="checkbox">
             <label>

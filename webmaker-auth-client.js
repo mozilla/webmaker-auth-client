@@ -116,6 +116,7 @@
               usernameGroup.classList.add('has-error');
               usernameGroup.classList.remove('has-success');
               usernameTakenError.classList.remove('hidden');
+              usernameRequiredError.classList.add('hidden');
             }
             else {
               self.createUser({
