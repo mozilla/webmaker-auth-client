@@ -12,7 +12,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "hyperquest": "~0.2.0",
+    "webmaker-auth": "0.0.8",
     "bower": "~1.2.8"
   },
   "devDependencies": {

@@ -23,11 +23,13 @@
       self.paths.create = options.paths.create || '/create';
       self.paths.verify = options.paths.verify || '/verify';
       self.paths.logout = options.paths.logout || '/logout';
+      self.paths.checkUsername = options.paths.checkUsername || '/check-username';
       self.urls = {
         authenticate: self.host + self.paths.authenticate,
         create: self.host + self.paths.create,
         verify: self.host + self.paths.verify,
-        logout: self.host + self.paths.logout
+        logout: self.host + self.paths.logout,
+        checkUsername: self.host + self.paths.checkUsername
       };
       self.audience = options.audience || window.location.origin;
       self.prefix = options.prefix || 'webmaker-';
@@ -45,18 +47,67 @@
       self.modal.createSelector = '.create-user';
       self.modal.createBtnOnClick = function() {};
 
+      self.modal.checkUsernameOnChange = function() {
+        var usernameTakenError = self.modal.element.querySelector('.username-taken-error');
+        var usernameRequiredError = self.modal.element.querySelector('.username-required-error');
+        var usernameGroup = self.modal.element.querySelector('.username-group');
+        var username = this.value;
+        self.checkUsername(username, function(taken) {
+          if (taken) {
+            usernameGroup.classList.add('has-error');
+            usernameGroup.classList.remove('has-success');
+            usernameTakenError.classList.remove('hidden');
+          }
+          else if (!username) {
+            usernameGroup.classList.remove('has-success');
+            usernameGroup.classList.add('has-error');
+            usernameTakenError.classList.add('hidden');
+            usernameRequiredError.classList.remove('hidden');
+          }
+          else {
+            usernameGroup.classList.remove('has-error');
+            usernameGroup.classList.add('has-success');
+            usernameTakenError.classList.add('hidden');
+            usernameRequiredError.classList.add('hidden');
+          }
+        });
+      };
+
       self.modal.setup = function(assertion, email) {
         var createBtn = self.modal.element.querySelector(self.modal.createSelector);
         var closeBtns = self.modal.element.querySelectorAll(self.modal.dismissSelector);
-        createBtn.removeEventListener('click', self.modal.createBtnOnClick, false);
-        self.modal.createBtnOnClick = function() {
-          var agreeInput = self.modal.element.querySelector('[name="agreeToTerms"]');
-          var usernameInput = self.modal.element.querySelector('[name="username"]');
-          var mailingListInput = self.modal.element.querySelector('[name="mailingList"]');
-          var errorMessage = self.modal.element.querySelector('.agree-error');
 
-          if (!agreeInput || !agreeInput.checked || !usernameInput.value) {
-            errorMessage && errorMessage.classList.remove('hidden');
+        var usernameGroup = self.modal.element.querySelector('.username-group');
+        var agreeGroup = self.modal.element.querySelector('.agree-group');
+
+        var usernameTakenError = self.modal.element.querySelector('.username-taken-error');
+        var usernameRequiredError = self.modal.element.querySelector('.username-required-error');
+        var agreeError = self.modal.element.querySelector('.agree-error');
+
+        var usernameInput = self.modal.element.querySelector('[name="username"]');
+        var agreeInput = self.modal.element.querySelector('[name="agreeToTerms"]');
+        var mailingListInput = self.modal.element.querySelector('[name="mailingList"]');
+
+        createBtn.removeEventListener('click', self.modal.createBtnOnClick, false);
+        usernameInput.addEventListener('change', self.modal.checkUsernameOnChange, false);
+
+        self.modal.createBtnOnClick = function() {
+          var hasError = false;
+
+          if (!agreeInput.checked) {
+            agreeGroup.classList.add('has-error');
+            agreeError.classList.remove('hidden');
+            hasError = true;
+          }
+
+          if (!usernameInput.value) {
+            usernameGroup.classList.add('has-error');
+            usernameGroup.classList.remove('has-success');
+            usernameRequiredError.classList.remove('hidden');
+            hasError = true;
+          }
+
+          if (hasError) {
             return;
           }
 
@@ -67,7 +118,15 @@
               mailingList: mailingListInput.checked
             }
           });
-          errorMessage && errorMessage.classList.add('hidden');
+
+          usernameTakenError.classList.add('hidden');
+          usernameRequiredError.classList.add('hidden');
+          agreeError.classList.add('hidden');
+
+          usernameGroup.classList.remove('has-error');
+          usernameGroup.classList.remove('has-success');
+          agreeGroup.classList.remove('has-error');
+
           self.modal.close();
         };
 
@@ -98,6 +157,46 @@
         self.emitter.removeListener(event, cb);
       };
 
+      self.checkUsername = function(username, callback) {
+        var http = new XMLHttpRequest();
+        var body = JSON.stringify({
+          username: username
+        });
+
+        http.open('POST', self.urls.checkUsername, true);
+        http.setRequestHeader('Content-type', 'application/json');
+        http.setRequestHeader('X-CSRF-Token', self.csrfToken);
+
+        http.onreadystatechange = function() {
+          if (http.readyState == 4 && http.status == 200) {
+            var response = JSON.parse(http.responseText);
+
+            // Username exists;
+            if (response.exists) {
+              callback(true, 'Username taken');
+            } else {
+              callback(false, 'Username not taken');
+            }
+
+          }
+          // Some other error
+          else if (http.readyState === 4 && http.status && (http.status >= 400 || http.status < 200)) {
+            self.emitter.emitEvent('error', [http.responseText]);
+            callback(false, 'Error checking username');
+          }
+
+          // No response
+          else if (http.readyState === 4) {
+            self.emitter.emitEvent('error', ['Looks like ' + self.urls.checkUsername + ' is not responding...']);
+            callback(false, 'Error checking username');
+          }
+
+        };
+
+        http.send(body);
+
+      };
+
       self.createUser = function(data, callback) {
 
         var http = new XMLHttpRequest();
@@ -110,6 +209,7 @@
         http.open('POST', self.urls.create, true);
         http.setRequestHeader('Content-type', 'application/json');
         http.setRequestHeader('X-CSRF-Token', self.csrfToken);
+
         http.onreadystatechange = function() {
           if (http.readyState == 4 && http.status == 200) {
             var data = JSON.parse(http.responseText);
@@ -135,6 +235,8 @@
           }
 
         };
+
+        console.log(http);
 
         http.send(body);
 
@@ -243,6 +345,11 @@
 
             if (http.readyState == 4 && http.status == 200) {
               var data = JSON.parse(http.responseText);
+
+              // There was an error
+              if (data.error) {
+                self.emitter.emitEvent('error', [data.error]);
+              }
 
               // User exists
               if (data.user) {

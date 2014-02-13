@@ -11,7 +11,7 @@ module.exports = function (grunt) {
     watch: {
       node: {
         files: ['example/**/*.js'],
-        tasks: ['shell:fakeLogin', 'shell:fakeApp', 'shell:fakeApp2']
+        tasks: ['shell:fakeApp', 'shell:fakeApp2']
       },
       client: {
         files: ['webmaker-auth-client.js'],
@@ -67,7 +67,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
-  grunt.registerTask('default', [ 'shell:fakeLogin', 'shell:fakeApp',  'shell:fakeApp2', 'watch']);
+  grunt.registerTask('default', ['shell:fakeApp',  'shell:fakeApp2', 'watch']);
 
   // Clean code before a commit
   grunt.registerTask('clean', ['jsbeautifier:modify', 'jshint']);

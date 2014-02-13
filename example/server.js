@@ -27,12 +27,12 @@ app.use(login.cookieSession());
 
 app.use(express.static(__dirname + '/..'));
 
-console.log(__dirname);
 
 app.post('/verify', login.handlers.verify);
 app.post('/authenticate', login.handlers.authenticate);
 app.post('/create', login.handlers.create);
 app.post('/logout', login.handlers.logout);
+app.post('/check-username', login.handlers.exists);
 
 app.listen(env.get('PORT'), function() {
   console.log('App listening on ' + env.get('PORT'));

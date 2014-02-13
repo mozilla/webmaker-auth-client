@@ -1,8 +1,6 @@
 /*********************************************************
 * Mixins
 */
-//DEV
-
 
 .fade {
   opacity: 0;
@@ -287,7 +285,7 @@ input[name="username"] {
   width: 50%;
 }
 
-.error {
+.has-error {
   color: #a94442;
 }
 .hidden {
