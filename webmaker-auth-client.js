@@ -166,6 +166,11 @@
               self.logout();
             }
 
+            else {
+              self.emitter.emitEvent('verified', false);
+            }
+
+
           }
 
           // Some other error
