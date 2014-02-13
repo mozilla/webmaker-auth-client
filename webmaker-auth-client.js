@@ -111,23 +111,33 @@
             return;
           }
 
-          self.createUser({
-            assertion: assertion,
-            user: {
-              username: usernameInput.value,
-              mailingList: mailingListInput.checked
+          self.checkUsername(usernameInput.value, function(taken) {
+            if (taken) {
+              usernameGroup.classList.add('has-error');
+              usernameGroup.classList.remove('has-success');
+              usernameTakenError.classList.remove('hidden');
+            }
+            else {
+              self.createUser({
+                assertion: assertion,
+                user: {
+                  username: usernameInput.value,
+                  mailingList: mailingListInput.checked
+                }
+              });
+
+              usernameTakenError.classList.add('hidden');
+              usernameRequiredError.classList.add('hidden');
+              agreeError.classList.add('hidden');
+
+              usernameGroup.classList.remove('has-error');
+              usernameGroup.classList.remove('has-success');
+              agreeGroup.classList.remove('has-error');
+
+              self.modal.close();
             }
           });
 
-          usernameTakenError.classList.add('hidden');
-          usernameRequiredError.classList.add('hidden');
-          agreeError.classList.add('hidden');
-
-          usernameGroup.classList.remove('has-error');
-          usernameGroup.classList.remove('has-success');
-          agreeGroup.classList.remove('has-error');
-
-          self.modal.close();
         };
 
         for (var i = 0; i < closeBtns.length; i++) {
