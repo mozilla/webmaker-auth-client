@@ -269,17 +269,17 @@
         http.onreadystatechange = function () {
           if (http.readyState === 4 && http.status === 200) {
             var data = JSON.parse(http.responseText);
-            var storedUserData = self.storage.get();
 
             // Email is the same as response.
             if (email && data.email === email) {
-              self.emitter.emitEvent('verified', [storedUserData]);
+              self.emitter.emitEvent('verified', [data.user]);
+              self.storage.set(data.user);
             }
 
             // Email is not the same, but is a cookie
             else if (data.user) {
-              self.storage.set(data.user);
               self.emitter.emitEvent('login', [data.user, 'email mismatch']);
+              self.storage.set(data.user);
             }
 
             // No cookie
@@ -287,6 +287,7 @@
               self.logout();
             } else {
               self.emitter.emitEvent('verified', false);
+              self.storage.clear();
             }
 
           }
