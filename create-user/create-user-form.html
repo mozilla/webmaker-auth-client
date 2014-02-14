@@ -35,7 +35,7 @@
           </div>
           <div class="checkbox form-group agree-group">
             <label>
-              <input name="agreeToTerms" type="checkbox"> {{gettext("webmakerAuthAgreeToTerms") | instantiate}}
+              <input name="agreeToTerms" type="checkbox"> {{gettext("webmakerAuthAgreeToTerms") | instantiate | safe }}
             </label>
             <span class="help-block agree-error hidden">
               {{gettext("webmakerAuthAgreeError")}}
