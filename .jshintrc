@@ -1,8 +1,8 @@
 {
   "globals": {
     "module": true,
-    "angular": true,
-    "console": true
+    "console": true,
+    "define": true
   },
   "bitwise": true,
   "browser": true,

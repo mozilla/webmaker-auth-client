@@ -1,4 +1,4 @@
-(function(window) {
+(function (window) {
 
   function webmakerAuthClientDefinition(EventEmitter) {
 
@@ -45,26 +45,24 @@
       self.modal.element = document.getElementById('webmaker-login-new-user');
       self.modal.dismissSelector = '[data-dismiss]';
       self.modal.createSelector = '.create-user';
-      self.modal.createBtnOnClick = function() {};
+      self.modal.createBtnOnClick = function () {};
 
-      self.modal.checkUsernameOnChange = function() {
+      self.modal.checkUsernameOnChange = function () {
         var usernameTakenError = self.modal.element.querySelector('.username-taken-error');
         var usernameRequiredError = self.modal.element.querySelector('.username-required-error');
         var usernameGroup = self.modal.element.querySelector('.username-group');
         var username = this.value;
-        self.checkUsername(username, function(taken) {
+        self.checkUsername(username, function (taken) {
           if (taken) {
             usernameGroup.classList.add('has-error');
             usernameGroup.classList.remove('has-success');
             usernameTakenError.classList.remove('hidden');
-          }
-          else if (!username) {
+          } else if (!username) {
             usernameGroup.classList.remove('has-success');
             usernameGroup.classList.add('has-error');
             usernameTakenError.classList.add('hidden');
             usernameRequiredError.classList.remove('hidden');
-          }
-          else {
+          } else {
             usernameGroup.classList.remove('has-error');
             usernameGroup.classList.add('has-success');
             usernameTakenError.classList.add('hidden');
@@ -73,7 +71,7 @@
         });
       };
 
-      self.modal.setup = function(assertion, email) {
+      self.modal.setup = function (assertion, email) {
         var createBtn = self.modal.element.querySelector(self.modal.createSelector);
         var closeBtns = self.modal.element.querySelectorAll(self.modal.dismissSelector);
 
@@ -91,7 +89,7 @@
         createBtn.removeEventListener('click', self.modal.createBtnOnClick, false);
         usernameInput.addEventListener('change', self.modal.checkUsernameOnChange, false);
 
-        self.modal.createBtnOnClick = function() {
+        self.modal.createBtnOnClick = function () {
           var hasError = false;
 
           if (!agreeInput.checked) {
@@ -111,14 +109,13 @@
             return;
           }
 
-          self.checkUsername(usernameInput.value, function(taken) {
+          self.checkUsername(usernameInput.value, function (taken) {
             if (taken) {
               usernameGroup.classList.add('has-error');
               usernameGroup.classList.remove('has-success');
               usernameTakenError.classList.remove('hidden');
               usernameRequiredError.classList.add('hidden');
-            }
-            else {
+            } else {
               self.createUser({
                 assertion: assertion,
                 user: {
@@ -148,27 +145,27 @@
         createBtn.addEventListener('click', self.modal.createBtnOnClick, false);
       };
 
-      self.modal.open = function() {
+      self.modal.open = function () {
         self.modal.element.classList.add('in');
         self.modal.element.style.display = 'block';
-        self.modal.element.setAttribute('aria-hidden', false)
+        self.modal.element.setAttribute('aria-hidden', false);
       };
 
-      self.modal.close = function() {
+      self.modal.close = function () {
         self.modal.element.classList.remove('in');
         self.modal.element.style.display = 'none';
         self.modal.element.setAttribute('aria-hidden', true);
       };
 
-      self.on = function(event, cb) {
+      self.on = function (event, cb) {
         self.emitter.addListener(event, cb);
       };
 
-      self.off = function(event, cb) {
+      self.off = function (event, cb) {
         self.emitter.removeListener(event, cb);
       };
 
-      self.checkUsername = function(username, callback) {
+      self.checkUsername = function (username, callback) {
         var http = new XMLHttpRequest();
         var body = JSON.stringify({
           username: username
@@ -178,8 +175,8 @@
         http.setRequestHeader('Content-type', 'application/json');
         http.setRequestHeader('X-CSRF-Token', self.csrfToken);
 
-        http.onreadystatechange = function() {
-          if (http.readyState == 4 && http.status == 200) {
+        http.onreadystatechange = function () {
+          if (http.readyState === 4 && http.status === 200) {
             var response = JSON.parse(http.responseText);
 
             // Username exists;
@@ -208,7 +205,7 @@
 
       };
 
-      self.createUser = function(data, callback) {
+      self.createUser = function (data, callback) {
 
         var http = new XMLHttpRequest();
         var body = JSON.stringify({
@@ -221,8 +218,8 @@
         http.setRequestHeader('Content-type', 'application/json');
         http.setRequestHeader('X-CSRF-Token', self.csrfToken);
 
-        http.onreadystatechange = function() {
-          if (http.readyState == 4 && http.status == 200) {
+        http.onreadystatechange = function () {
+          if (http.readyState === 4 && http.status === 200) {
             var data = JSON.parse(http.responseText);
 
             // User creation successful
@@ -253,7 +250,7 @@
 
       };
 
-      self.verify = function() {
+      self.verify = function () {
 
         if (self.storage.get()) {
           self.emitter.emitEvent('login', [self.storage.get(), 'restored']);
@@ -269,8 +266,8 @@
         http.open('POST', self.urls.verify, true);
         http.setRequestHeader('Content-type', 'application/json');
         http.setRequestHeader('X-CSRF-Token', self.csrfToken);
-        http.onreadystatechange = function() {
-          if (http.readyState == 4 && http.status == 200) {
+        http.onreadystatechange = function () {
+          if (http.readyState === 4 && http.status === 200) {
             var data = JSON.parse(http.responseText);
             var storedUserData = self.storage.get();
 
@@ -288,9 +285,7 @@
             // No cookie
             else if (email && !data.user) {
               self.logout();
-            }
-
-            else {
+            } else {
               self.emitter.emitEvent('verified', false);
             }
 
@@ -310,19 +305,15 @@
 
         http.send(body);
 
-      }
+      };
 
-      self.login = function() {
+      self.login = function () {
 
         if (!window.navigator.id) {
           console.error('No persona found. Did you include include.js?');
         }
 
-        window.navigator.id.get(function(assertion) {
-          var data = {
-            audience: self.audience,
-            assertion: assertion
-          };
+        window.navigator.id.get(function (assertion) {
 
           if (!assertion) {
             self.emitter.emitEvent('error', [
@@ -337,7 +328,7 @@
           });
 
           if (self.timeout) {
-            var timeoutInstance = setTimeout(function() {
+            var timeoutInstance = setTimeout(function () {
               self.emitter.emitEvent('error', [
                 'The request for a token timed out after ' + self.timeout + ' seconds'
               ]);
@@ -347,14 +338,14 @@
           http.open('POST', self.urls.authenticate, true);
           http.setRequestHeader('Content-type', 'application/json');
           http.setRequestHeader('X-CSRF-Token', self.csrfToken);
-          http.onreadystatechange = function() {
+          http.onreadystatechange = function () {
 
             // Clear the timeout
             if (self.timeout && timeoutInstance) {
               clearTimeout(timeoutInstance);
             }
 
-            if (http.readyState == 4 && http.status == 200) {
+            if (http.readyState === 4 && http.status === 200) {
               var data = JSON.parse(http.responseText);
 
               // There was an error
@@ -403,7 +394,7 @@
 
       };
 
-      self.logout = function() {
+      self.logout = function () {
         var http = new XMLHttpRequest();
         http.open('POST', self.urls.logout, true);
         http.setRequestHeader('X-CSRF-Token', self.csrfToken);
@@ -415,7 +406,7 @@
 
       // Utilities for accessing local storage
       self.storage = {
-        get: function(key) {
+        get: function (key) {
           var data = JSON.parse(localStorage.getItem(self.localStorageKey));
           if (!data) {
             return;
@@ -426,7 +417,7 @@
             return data;
           }
         },
-        set: function(data) {
+        set: function (data) {
           var userObj = JSON.parse(localStorage.getItem(self.localStorageKey)) || {};
           for (var key in data) {
             if (data.hasOwnProperty(key)) {
@@ -435,13 +426,13 @@
           }
           localStorage.setItem(self.localStorageKey, JSON.stringify(userObj));
         },
-        clear: function() {
+        clear: function () {
           delete localStorage[self.localStorageKey];
         }
       };
 
     };
-  };
+  }
 
   // AMD
   if (typeof define === 'function' && define.amd) {

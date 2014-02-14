@@ -4,7 +4,7 @@ module.exports = function (grunt) {
     uglify: {
       main: {
         files: {
-          'dist/webmaker-auth-client.min.js' : ['bower_components/eventEmitter/eventEmitter.js', 'webmaker-auth-client.js']
+          'dist/webmaker-auth-client.min.js': ['bower_components/eventEmitter/eventEmitter.js', 'webmaker-auth-client.js']
         }
       }
     },
@@ -39,20 +39,20 @@ module.exports = function (grunt) {
       }
     },
     jshint: {
-      all: ['webmaker-auth-client.js'],
+      all: ['Gruntfile.js', 'webmaker-auth-client.js'],
       options: {
         jshintrc: '.jshintrc'
       }
     },
     jsbeautifier: {
       modify: {
-        src: ['webmaker-auth-client.js'],
+        src: ['Gruntfile.js', 'webmaker-auth-client.js'],
         options: {
           config: '.jsbeautifyrc'
         }
       },
       validate: {
-        src: ['Gruntfile.js', 'webmaker-login.js', 'example/webmaker-auth-client.js'],
+        src: ['Gruntfile.js', 'webmaker-auth-client.js'],
         options: {
           mode: 'VERIFY_ONLY',
           config: '.jsbeautifyrc'
@@ -67,7 +67,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
-  grunt.registerTask('default', ['shell:fakeApp',  'shell:fakeApp2', 'watch']);
+  grunt.registerTask('default', ['shell:fakeApp', 'shell:fakeApp2', 'watch']);
 
   // Clean code before a commit
   grunt.registerTask('clean', ['jsbeautifier:modify', 'jshint']);
