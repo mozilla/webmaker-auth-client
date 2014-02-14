@@ -2,20 +2,84 @@
 
 ## Install
 
-```bash
-bower install git://github.com:k88hudson/webmaker-auth-client.git
 ```
-TODO
-```bash
 bower install webmaker-auth-client
 ```
 
-
-## Setup
+## What's included?
 
 ```
-var auth = new WebmakerAuthClient();
+webmaker-auth-client.js
+
+\create-user
+    create-user-form.css
+    create-user-form.html
+\dist
+    webmaker-auth-client.min.js
 ```
+
+
+
+## Example
+
+```html
+<html>
+  <head></head>
+  <body>
+
+    <button id="login"></button>
+    <button id="logout"></button>
+
+    <script src="bower_components/webmaker-auth-client/dist/webmaker-auth-client.min.js"></script>
+    <script src="bower_components/eventEmitter/EventEmitter.js"></script>
+    <script>
+      var auth = new WebmakerAuthClient();
+
+      var loginEl = document.querySelector('#login');
+      var logoutEl = document.querySelector('#logout');
+
+      auth.on('login', function(user, message) {
+        console.log('login', user, message);
+      });
+
+      auth.on('logout', function() {
+        console.log('logout');
+      });
+
+      auth.on('verified', function(user) {
+        console.log('verified', user);
+      });
+
+      auth.on('error', function(err) {
+        console.log(err);
+      });
+
+      auth.verify();
+
+      loginEl.addEventListener('click', auth.login, false);
+      logoutEl.addEventListener('click', auth.logout, false);
+    </script>
+  </body>
+</html>
+```
+
+### Require-js
+
+```js
+requirejs.config({
+  paths: {
+    'eventEmitter': '/bower/eventEmitter',
+    'webmaker-auth-client': '/bower/webmaker-auth-client'
+  }
+});
+
+define(['webmaker-auth-client/webmaker-auth-client'],
+  function(WebmakerAuthClient) {
+    var auth = new WebmakerAuthClient();
+    ...
+  });
+```
+
 
 ## Configure
 

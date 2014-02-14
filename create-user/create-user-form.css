@@ -196,17 +196,13 @@
   font-size: 21px;
   font-weight: normal;
   line-height: 1;
-  color: #555;
-  opacity: 0.2;
-  filter: alpha(opacity=20);
+  color: #999;
 }
 .close:hover,
 .close:focus {
   color: #333;
   text-decoration: none;
   cursor: pointer;
-  opacity: 0.5;
-  filter: alpha(opacity=50);
 }
 button.close {
   padding: 0;
@@ -250,9 +246,22 @@ input[type="checkbox"]:focus {
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 }
-input.form-control:focus {
+.form-control:focus {
   outline: none;
   border-color: #3fb58e;
+}
+.has-success .form-control {
+  border-color: #CCC;
+}
+.has-success .form-control:focus {
+  border-color: #3fb58e;
+}
+
+.has-error .form-control {
+  border-color: #DAAFAF;
+}
+.has-error .form-control:focus {
+  border-color: #A94442;
 }
 .form-group {
   margin-bottom: 15px;
@@ -276,11 +285,7 @@ input.form-control:focus {
   margin-left: -20px;
 }
 
-label[for="username"] {
-  line-height: 37px;
-}
-
-.has-error {
+.has-error .help-block {
   color: #a94442;
 }
 
@@ -290,6 +295,7 @@ label[for="username"] {
 
 .help-block {
   display: block;
+  margin: 8px 0;
   font-size: 0.8em;
 }
 
