@@ -10,16 +10,18 @@ bower install webmaker-auth-client --save
 
 ## What's included?
 
-```
+```bash
+
+# Main js file
 webmaker-auth-client.js
 
 # Create new user form assets
-\create-user
+create-user/
     create-user-form.css
     create-user-form.html
 
 # Minified file (~11kb) packaged with eventEmitter.
-\dist
+dist/
     webmaker-auth-client.min.js
 ```
 
@@ -33,35 +35,34 @@ webmaker-auth-client.js
 
     <button id="login"></button>
     <button id="logout"></button>
-
-    <script src="bower_components/webmaker-auth-client/dist/webmaker-auth-client.min.js"></script>
+    
+     <!--
+      If you are using the unminified version, you must also include EventEmitter.js
+      It will be automatically installed by bower.
+     -->
+    <script src="bower_components/webmaker-auth-client/webmaker-auth-client.js"></script>
     <script src="bower_components/eventEmitter/EventEmitter.js"></script>
     <script>
-      var auth = new WebmakerAuthClient();
-
       var loginEl = document.querySelector('#login');
       var logoutEl = document.querySelector('#logout');
-
-      auth.on('login', function(user, message) {
-        console.log('login', user, message);
+      
+      var auth = new WebmakerAuthClient();
+    
+      // Attach event listeners!
+      auth.on('login', function(user, debuggingInfo) {
+        console.log('login', user, debuggingInfo);
       });
-
       auth.on('logout', function() {
         console.log('logout');
       });
-
-      auth.on('verified', function(user) {
-        console.log('verified', user);
-      });
-
-      auth.on('error', function(err) {
-        console.log(err);
-      });
-
+    
+      // Run this function to automatically log-in users with a session set.
       auth.verify();
-
+      
+      // Use auth.login and auth.logout to login and out!
       loginEl.addEventListener('click', auth.login, false);
       logoutEl.addEventListener('click', auth.logout, false);
+    
     </script>
   </body>
 </html>
@@ -87,7 +88,7 @@ define(['webmaker-auth-client/webmaker-auth-client'],
 
 ## Configure
 
-```
+```js
 var auth = new WebmakerAuthClient({
   host: '',
   paths: {
@@ -106,7 +107,7 @@ var auth = new WebmakerAuthClient({
 
 ## Listen to events
 
-```
+```js
 auth.on('event', callback);
 auth.off('event', callback);
 ```
@@ -119,20 +120,15 @@ auth.off('event', callback);
 
 `logout`: When user logs out or is logged out due to an error.
 
-## To automatically login users, and set up SSO, you must call
-```
+## Session restore and SSO 
+### To automatically login users and set up SSO, you must call
+```js
 auth.verify();
 ```
 
-## Call login and logout
+## Login/Logout
 
-```
+```js
 auth.login();
 auth.logout();
 ```
-
-### TODO:
-
-* require.js + minification
-* tests
-* publish to bower
