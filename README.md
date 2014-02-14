@@ -1,12 +1,20 @@
 # Webmaker auth client
 
+This is the client-side library that adds support for Webmaker Login to your app. In order for it to work, you will need the following on your app's server:
+
+* [express](https://github.com/visionmedia/express)
+* [webmaker-auth](https://github.com/mozilla/webmaker-auth), the sister node module for this library
+
+If you choose to use the create user form assets included in this package, you will also need [node-webmaker-l18n](https://github.com/mozilla/node-webmaker-i18n) for localization and [nunjucks](https://github.com/jlongster/nunjucks) for server-side rendering.
+
 ## Install
 
-Webmaker-auth-client has one dependency, `eventEmitter`. This will also be added to your bower.json if you choose to install `webmaker-auth-client`.
+This package has one dependency, [EventEmitter](https://github.com/Wolfy87/EventEmitter). This will also be added to your bower.json if you choose to install webmaker-auth-client.
 
 ```
 bower install webmaker-auth-client --save
 ```
+
 
 ## What's included?
 
@@ -19,6 +27,11 @@ webmaker-auth-client.js
 create-user/
     create-user-form.css
     create-user-form.html
+
+# Localized strings for create new user form
+locale/
+    en_US/
+        create-user-form.json
 
 # Minified file (~11kb) packaged with eventEmitter.
 dist/
