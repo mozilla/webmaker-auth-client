@@ -2,8 +2,10 @@
 
 ## Install
 
+Webmaker-auth-client has one dependency, `eventEmitter`. This will also be added to your bower.json if you choose to install `webmaker-auth-client`.
+
 ```
-bower install webmaker-auth-client
+bower install webmaker-auth-client --save
 ```
 
 ## What's included?
@@ -11,13 +13,15 @@ bower install webmaker-auth-client
 ```
 webmaker-auth-client.js
 
+# Create new user form assets
 \create-user
     create-user-form.css
     create-user-form.html
+
+# Minified file (~11kb) packaged with eventEmitter.
 \dist
     webmaker-auth-client.min.js
 ```
-
 
 
 ## Example
