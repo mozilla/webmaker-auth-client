@@ -36,6 +36,8 @@
       self.timeout = options.timeout || 10;
       self.localStorageKey = self.prefix + 'login';
       self.csrfToken = options.csrfToken;
+      // Needed when cookie-issuing server is on a different port than the client
+      self.withCredentials = options.withCredentials === false ? false : true;
 
       // Create New User Modal
       self.handleNewUserUI = options.handleNewUserUI === false ? false : true;
@@ -171,6 +173,7 @@
           username: username
         });
 
+        http.withCredentials = self.withCredentials;
         http.open('POST', self.urls.checkUsername, true);
         http.setRequestHeader('Content-type', 'application/json');
         http.setRequestHeader('X-CSRF-Token', self.csrfToken);
@@ -214,6 +217,7 @@
           user: data.user
         });
 
+        http.withCredentials = self.withCredentials;
         http.open('POST', self.urls.create, true);
         http.setRequestHeader('Content-type', 'application/json');
         http.setRequestHeader('X-CSRF-Token', self.csrfToken);
@@ -263,6 +267,7 @@
           email: email
         });
 
+        http.withCredentials = self.withCredentials;
         http.open('POST', self.urls.verify, true);
         http.setRequestHeader('Content-type', 'application/json');
         http.setRequestHeader('X-CSRF-Token', self.csrfToken);
@@ -336,6 +341,7 @@
             }, self.timeout * 1000);
           }
 
+          http.withCredentials = self.withCredentials;
           http.open('POST', self.urls.authenticate, true);
           http.setRequestHeader('Content-type', 'application/json');
           http.setRequestHeader('X-CSRF-Token', self.csrfToken);
@@ -397,6 +403,7 @@
 
       self.logout = function () {
         var http = new XMLHttpRequest();
+        http.withCredentials = self.withCredentials;
         http.open('POST', self.urls.logout, true);
         http.setRequestHeader('X-CSRF-Token', self.csrfToken);
         http.send(null);
