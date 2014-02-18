@@ -248,8 +248,6 @@
 
         };
 
-        console.log(http);
-
         http.send(body);
 
       };
