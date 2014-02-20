@@ -2,18 +2,18 @@
 * Mixins
 */
 
-#webmaker-login-new-user fade {
+#webmaker-login-new-user .fade {
   opacity: 0;
   -webkit-transition: opacity 0.15s linear;
   transition: opacity 0.15s linear;
 }
-#webmaker-login-new-user fade.in {
+#webmaker-login-new-user .fade.in {
   opacity: 1;
 }
-#webmaker-login-new-user modal-open {
+#webmaker-login-new-user .modal-open {
   overflow: hidden;
 }
-#webmaker-login-new-user modal {
+#webmaker-login-new-user .modal {
   display: none;
   overflow: auto;
   overflow-y: scroll;
@@ -24,7 +24,7 @@
   left: 0;
   z-index: 1000000;
 }
-#webmaker-login-new-user modal.fade .modal-dialog {
+#webmaker-login-new-user .modal.fade .modal-dialog {
   -webkit-transform: translate(0, -25%);
   -ms-transform: translate(0, -25%);
   transform: translate(0, -25%);
@@ -33,12 +33,12 @@
   -o-transition: -o-transform 0.3s ease-out;
   transition: transform 0.3s ease-out;
 }
-#webmaker-login-new-user modal.in .modal-dialog {
+#webmaker-login-new-user .modal.in .modal-dialog {
   -webkit-transform: translate(0, 0);
   -ms-transform: translate(0, 0);
   transform: translate(0, 0);
 }
-#webmaker-login-new-user modal-dialog {
+#webmaker-login-new-user .modal-dialog {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -47,7 +47,7 @@
   margin: 10px;
   z-index: 1000010;
 }
-#webmaker-login-new-user modal-content {
+#webmaker-login-new-user .modal-content {
   position: relative;
   background-color: #ffffff;
   border: 1px solid #999999;
@@ -58,7 +58,7 @@
   background-clip: padding-box;
   outline: none;
 }
-#webmaker-login-new-user modal-backdrop {
+#webmaker-login-new-user .modal-backdrop {
   position: fixed;
   top: 0;
   right: 0;
@@ -68,47 +68,47 @@
   background-color: #000000;
   opacity: 0.5;
 }
-#webmaker-login-new-user modal-backdrop.fade {
+#webmaker-login-new-user .modal-backdrop.fade {
   opacity: 0;
   filter: alpha(opacity=0);
 }
-#webmaker-login-new-user modal-backdrop.in {
+#webmaker-login-new-user .modal-backdrop.in {
   opacity: 0.5;
   filter: alpha(opacity=50);
 }
-#webmaker-login-new-user modal-header {
+#webmaker-login-new-user .modal-header {
   padding: 15px;
   border-bottom: 1px solid #e5e5e5;
   min-height: 16.5px;
 }
-#webmaker-login-new-user modal-header .close {
+#webmaker-login-new-user .modal-header .close {
   margin-top: -2px;
 }
-#webmaker-login-new-user modal-title {
+#webmaker-login-new-user .modal-title {
   margin: 0;
   line-height: 1.5;
 }
-#webmaker-login-new-user modal-body {
+#webmaker-login-new-user .modal-body {
   position: relative;
   padding: 20px;
 }
-#webmaker-login-new-user modal-footer {
+#webmaker-login-new-user .modal-footer {
   margin-top: 15px;
   padding: 19px 20px 20px;
   text-align: right;
   border-top: 1px solid #dddddd;
 }
-#webmaker-login-new-user modal-footer .btn + .btn {
+#webmaker-login-new-user .modal-footer .btn + .btn {
   margin-left: 5px;
   margin-bottom: 0;
 }
-#webmaker-login-new-user modal-footer .btn-group .btn + .btn {
+#webmaker-login-new-user .modal-footer .btn-group .btn + .btn {
   margin-left: -1px;
 }
-#webmaker-login-new-user modal-footer .btn-block + .btn-block {
+#webmaker-login-new-user .modal-footer .btn-block + .btn-block {
   margin-left: 0;
 }
-media screen and (min-width: 768px) {
+@media screen and (min-width: 768px) {
   #webmaker-login-new-user .modal-dialog {
     width: 600px;
     margin: 30px auto;
@@ -121,7 +121,7 @@ media screen and (min-width: 768px) {
 /*********************************************************
 * Btn
 */
-#webmaker-login-new-user btn {
+#webmaker-login-new-user .btn {
   display: inline-block;
   margin-bottom: 0;
   font-weight: normal;
@@ -141,93 +141,93 @@ media screen and (min-width: 768px) {
   -o-user-select: none;
   user-select: none;
 }
-#webmaker-login-new-user btn:focus {
+#webmaker-login-new-user .btn:focus {
   outline: thin dotted;
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
 }
-#webmaker-login-new-user btn:hover,
-#webmaker-login-new-user btn:focus {
+#webmaker-login-new-user .btn:hover,
+#webmaker-login-new-user .btn:focus {
   color: #333333;
   text-decoration: none;
 }
-#webmaker-login-new-user btn:active,
-#webmaker-login-new-user btn.active {
+#webmaker-login-new-user .btn:active,
+#webmaker-login-new-user .btn.active {
   outline: 0;
   background-image: none;
   -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
   box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
 }
-#webmaker-login-new-user btn-default {
+#webmaker-login-new-user .btn-default {
   color: #333333;
   background-color: #ffffff;
   border-color: #cccccc;
 }
-#webmaker-login-new-user btn-default:hover,
-#webmaker-login-new-user btn-default:focus,
-#webmaker-login-new-user btn-default:active,
-#webmaker-login-new-user btn-default.active,
-#webmaker-login-new-user open .dropdown-toggle.btn-default {
+#webmaker-login-new-user .btn-default:hover,
+#webmaker-login-new-user .btn-default:focus,
+#webmaker-login-new-user .btn-default:active,
+#webmaker-login-new-user .btn-default.active,
+#webmaker-login-new-user .open .dropdown-toggle.btn-default {
   color: #333333;
   background-color: #ebebeb;
   border-color: #adadad;
 }
-#webmaker-login-new-user btn-default .badge {
+#webmaker-login-new-user .btn-default .badge {
   color: #ffffff;
   background-color: #fff;
 }
-#webmaker-login-new-user btn-primary {
+#webmaker-login-new-user .btn-primary {
   color: #ffffff;
   background-color: #3fb58e;
   border-color: #38a27f;
 }
-#webmaker-login-new-user btn-primary:hover,
-#webmaker-login-new-user btn-primary:focus,
-#webmaker-login-new-user btn-primary:active,
-#webmaker-login-new-user btn-primary.active,
-#webmaker-login-new-user open .dropdown-toggle.btn-primary {
+#webmaker-login-new-user .btn-primary:hover,
+#webmaker-login-new-user .btn-primary:focus,
+#webmaker-login-new-user .btn-primary:active,
+#webmaker-login-new-user .btn-primary.active,
+#webmaker-login-new-user .open .dropdown-toggle.btn-primary {
   color: #ffffff;
   background-color: #349776;
   border-color: #29755c;
 }
 
-#webmaker-login-new-user close {
+#webmaker-login-new-user .close {
   float: right;
   font-size: 21px;
   font-weight: normal;
   line-height: 1;
   color: #999;
 }
-#webmaker-login-new-user close:hover,
-#webmaker-login-new-user close:focus {
+#webmaker-login-new-user .close:hover,
+#webmaker-login-new-user .close:focus {
   color: #333;
   text-decoration: none;
   cursor: pointer;
 }
-#webmaker-login-new-user utton.close {
+#webmaker-login-new-user button.close {
   padding: 0;
   cursor: pointer;
   background: transparent;
   border: 0;
   -webkit-appearance: none;
 }
-#webmaker-login-new-user abel {
+#webmaker-login-new-user label {
   display: inline-block;
   margin-bottom: 5px;
   font-weight: bold;
 }
-#webmaker-login-new-user nput[type="checkbox"] {
+#webmaker-login-new-user input[type="checkbox"] {
   margin: 4px 0 0;
   margin-top: 1px \9;
   /* IE8-9 */
   line-height: normal;
 }
-#webmaker-login-new-user nput[type="checkbox"]:focus {
+#webmaker-login-new-user input[type="checkbox"]:focus {
   outline: thin dotted;
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
 }
-#webmaker-login-new-user form-control {
+#webmaker-login-new-user .form-control {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -246,27 +246,27 @@ media screen and (min-width: 768px) {
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 }
-#webmaker-login-new-user form-control:focus {
+#webmaker-login-new-user .form-control:focus {
   outline: none;
   border-color: #3fb58e;
 }
-#webmaker-login-new-user has-success .form-control {
+#webmaker-login-new-user .has-success .form-control {
   border-color: #CCC;
 }
-#webmaker-login-new-user has-success .form-control:focus {
+#webmaker-login-new-user .has-success .form-control:focus {
   border-color: #3fb58e;
 }
 
-#webmaker-login-new-user has-error .form-control {
+#webmaker-login-new-user .has-error .form-control {
   border-color: #DAAFAF;
 }
-#webmaker-login-new-user has-error .form-control:focus {
+#webmaker-login-new-user .has-error .form-control:focus {
   border-color: #A94442;
 }
-#webmaker-login-new-user form-group {
+#webmaker-login-new-user .form-group {
   margin-bottom: 15px;
 }
-#webmaker-login-new-user checkbox {
+#webmaker-login-new-user .checkbox {
   display: block;
   min-height: 20px;
   margin-top: 10px;
@@ -274,43 +274,43 @@ media screen and (min-width: 768px) {
   padding-left: 20px;
   vertical-align: middle;
 }
-#webmaker-login-new-user checkbox label {
+#webmaker-login-new-user .checkbox label {
   display: inline;
   margin-bottom: 0;
   font-weight: normal;
   cursor: pointer;
 }
-#webmaker-login-new-user checkbox input[type="checkbox"] {
+#webmaker-login-new-user .checkbox input[type="checkbox"] {
   float: left;
   margin-left: -20px;
 }
 
-#webmaker-login-new-user has-error .help-block {
+#webmaker-login-new-user .has-error .help-block {
   color: #a94442;
 }
 
-#webmaker-login-new-user help-block.hidden {
+#webmaker-login-new-user .help-block.hidden {
   display: none;
 }
 
-#webmaker-login-new-user help-block {
+#webmaker-login-new-user .help-block {
   display: block;
   margin: 8px 0;
   font-size: 0.8em;
 }
 
-#webmaker-login-new-user row:before,
-#webmaker-login-new-user row:after {
+#webmaker-login-new-user .row:before,
+#webmaker-login-new-user .row:after {
   content: " "; /* 1 */
   display: table; /* 2 */
 }
 
-#webmaker-login-new-user row:after {
+#webmaker-login-new-user .row:after {
   clear: both;
 }
 
 
-media screen and (min-width: 768px) {
+@media screen and (min-width: 768px) {
   #webmaker-login-new-user .col-sm-6 {
     width: 50%;
     float: left;
