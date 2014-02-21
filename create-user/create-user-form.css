@@ -2,18 +2,18 @@
 * Mixins
 */
 
-#webmaker-login-new-user .fade {
+#webmaker-login-new-user.fade {
   opacity: 0;
   -webkit-transition: opacity 0.15s linear;
   transition: opacity 0.15s linear;
 }
-#webmaker-login-new-user .fade.in {
+#webmaker-login-new-user.fade.in {
   opacity: 1;
 }
-#webmaker-login-new-user .modal-open {
+#webmaker-login-new-user.modal-open {
   overflow: hidden;
 }
-#webmaker-login-new-user .modal {
+#webmaker-login-new-user.modal {
   display: none;
   overflow: auto;
   overflow-y: scroll;
@@ -24,7 +24,7 @@
   left: 0;
   z-index: 1000000;
 }
-#webmaker-login-new-user .modal.fade .modal-dialog {
+#webmaker-login-new-user.modal.fade .modal-dialog {
   -webkit-transform: translate(0, -25%);
   -ms-transform: translate(0, -25%);
   transform: translate(0, -25%);
@@ -33,7 +33,7 @@
   -o-transition: -o-transform 0.3s ease-out;
   transition: transform 0.3s ease-out;
 }
-#webmaker-login-new-user .modal.in .modal-dialog {
+#webmaker-login-new-user.modal.in .modal-dialog {
   -webkit-transform: translate(0, 0);
   -ms-transform: translate(0, 0);
   transform: translate(0, 0);
