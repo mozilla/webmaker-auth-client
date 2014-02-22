@@ -4,10 +4,6 @@
 
     return function WebmakerAuthClient(options) {
 
-      if (!window.localStorage) {
-        console.error('Local storage must be supported for instant login.');
-      }
-
       var self = this;
 
       options = options || {};
@@ -32,9 +28,7 @@
         checkUsername: self.host + self.paths.checkUsername
       };
       self.audience = options.audience || window.location.origin;
-      self.prefix = options.prefix || 'webmaker-';
       self.timeout = options.timeout || 10;
-      self.localStorageKey = self.prefix + 'login';
       self.csrfToken = options.csrfToken;
       // Needed when cookie-issuing server is on a different port than the client
       self.withCredentials = options.withCredentials === false ? false : true;
@@ -228,7 +222,6 @@
 
             // User creation successful
             if (data.user) {
-              self.storage.set(data.user);
               self.emitter.emitEvent('login', [data.user, 'user created']);
             } else {
               self.emitter.emitEvent('error', [http.responseText]);
@@ -253,17 +246,7 @@
       };
 
       self.verify = function () {
-
-        if (self.storage.get()) {
-          self.emitter.emitEvent('login', [self.storage.get(), 'restored']);
-        }
-
-        var email = self.storage.get('email');
-
         var http = new XMLHttpRequest();
-        var body = JSON.stringify({
-          email: email
-        });
 
         http.withCredentials = self.withCredentials;
         http.open('POST', self.urls.verify, true);
@@ -273,26 +256,12 @@
           if (http.readyState === 4 && http.status === 200) {
             var data = JSON.parse(http.responseText);
 
-            // Email is the same as response.
-            if (email && data.email === email) {
-              self.emitter.emitEvent('verified', [data.user]);
-              self.storage.set(data.user);
-            }
-
-            // Email is not the same, but is a cookie
-            else if (data.user) {
-              self.emitter.emitEvent('login', [data.user, 'email mismatch']);
-              self.storage.set(data.user);
-            }
-
-            // No cookie
-            else if (email && !data.user) {
-              self.logout();
+            // If we have a user, fire a login event, otherwise fire a logout event.
+            if (data.user) {
+              self.emitter.emitEvent('login', [data.user, 'restored']);
             } else {
-              self.emitter.emitEvent('verified', false);
-              self.storage.clear();
+              self.emitter.emitEvent('logout');
             }
-
           }
 
           // Some other error
@@ -307,7 +276,7 @@
 
         };
 
-        http.send(body);
+        http.send();
 
       };
 
@@ -360,7 +329,6 @@
 
               // User exists
               if (data.user) {
-                self.storage.set(data.user);
                 self.emitter.emitEvent('login', [data.user, 'authenticate']);
               }
 
@@ -407,36 +375,7 @@
         http.send(null);
 
         self.emitter.emitEvent('logout');
-        self.storage.clear();
       };
-
-      // Utilities for accessing local storage
-      self.storage = {
-        get: function (key) {
-          var data = JSON.parse(localStorage.getItem(self.localStorageKey));
-          if (!data) {
-            return;
-          }
-          if (key) {
-            return data[key];
-          } else {
-            return data;
-          }
-        },
-        set: function (data) {
-          var userObj = JSON.parse(localStorage.getItem(self.localStorageKey)) || {};
-          for (var key in data) {
-            if (data.hasOwnProperty(key)) {
-              userObj[key] = data[key];
-            }
-          }
-          localStorage.setItem(self.localStorageKey, JSON.stringify(userObj));
-        },
-        clear: function () {
-          delete localStorage[self.localStorageKey];
-        }
-      };
-
     };
   }
 
