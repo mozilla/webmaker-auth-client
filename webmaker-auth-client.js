@@ -376,6 +376,11 @@
 
         self.emitter.emitEvent('logout');
       };
+
+      // effect login status verification when (re)focussing on tools in browser tabs
+      window.addEventListener('focus', function() {
+        self.verify();
+      });
     };
   }
 
