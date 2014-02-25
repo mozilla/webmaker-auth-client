@@ -372,9 +372,23 @@
         http.withCredentials = self.withCredentials;
         http.open('POST', self.urls.logout, true);
         http.setRequestHeader('X-CSRF-Token', self.csrfToken);
+        http.onreadystatechange = function () {
+          if (http.readyState === 4 && http.status === 200) {
+            self.emitter.emitEvent('logout');
+          }
+
+          // Some other error
+          else if (http.readyState === 4 && http.status && (http.status >= 400 || http.status < 200)) {
+            self.emitter.emitEvent('error', [http.responseText]);
+          }
+
+          // No response
+          else if (http.readyState === 4) {
+            self.emitter.emitEvent('error', ['Looks like ' + self.urls.logout + ' is not responding...']);
+          }
+        };
         http.send(null);
 
-        self.emitter.emitEvent('logout');
       };
 
       // effect login status verification when (re)focussing on tools in browser tabs
