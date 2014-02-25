@@ -112,7 +112,6 @@ var auth = new WebmakerAuthClient({
   },
   csrfToken: 'YOURCSRFTOKEN',
   audience: window.location.origin,
-  prefix: 'webmaker-', // for local storage
   timeout: 10,
   handleNewUserUI: true // Do you want to auto-open/close the new user UI?
 });
