@@ -125,11 +125,24 @@ auth.on('event', callback);
 auth.off('event', callback);
 ```
 
-`login`: When a user logs in or a session is automatically restored.
+### `login` (userData, [message])
 
-`error`: Includes error message.
+When a user logs in or a session is automatically restored.
 
-`logout`: When user logs out or is logged out due to an error, or when no user session exists.
+The `message` parameter is one of:
+
+- `null`: on a successful check from the server
+- `restored`: if the data was restored from local storage
+- `email mismatch`: if the email was different in local storage v.s. on the server
+- `user created`: if a new user was created an logged in
+
+###`error` (errorMessage)
+
+When an error happens. Check the error message for more information.
+
+### `logout` (no parameters)
+
+When user logs out or is logged out due to an error, or when no user session exists.
 
 ## Session restore and SSO
 ### To automatically login users and set up SSO, you must call

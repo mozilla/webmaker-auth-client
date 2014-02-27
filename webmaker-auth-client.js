@@ -261,9 +261,6 @@
         var email = self.storage.get('email');
 
         var http = new XMLHttpRequest();
-        var body = JSON.stringify({
-          email: email
-        });
 
         http.withCredentials = self.withCredentials;
         http.open('POST', self.urls.verify, true);
@@ -275,7 +272,7 @@
 
             // Email is the same as response.
             if (email && data.email === email) {
-              self.emitter.emitEvent('login', [data.user], 'verified');
+              self.emitter.emitEvent('login', [data.user]);
               self.storage.set(data.user);
             }
 
@@ -358,7 +355,7 @@
               // User exists
               if (data.user) {
                 self.storage.set(data.user);
-                self.emitter.emitEvent('login', [data.user, 'authenticate']);
+                self.emitter.emitEvent('login', [data.user]);
               }
 
               // Email valid, user does not exist
