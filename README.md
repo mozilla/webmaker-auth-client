@@ -125,15 +125,26 @@ auth.on('event', callback);
 auth.off('event', callback);
 ```
 
-`verify`: When the token is verified.
+### `login` (userData, [message])
 
-`login`: When a user logs in or a session is automatically restored.
+When a user logs in or a session is automatically restored.
 
-`error`: Includes error message.
+The `message` parameter is one of:
 
-`logout`: When user logs out or is logged out due to an error.
+- `null`: on a successful check from the server
+- `restored`: if the data was restored from local storage
+- `email mismatch`: if the email was different in local storage v.s. on the server
+- `user created`: if a new user was created an logged in
 
-## Session restore and SSO 
+###`error` (errorMessage)
+
+When an error happens. Check the error message for more information.
+
+### `logout` (no parameters)
+
+When user logs out or is logged out due to an error, or when no user session exists.
+
+## Session restore and SSO
 ### To automatically login users and set up SSO, you must call
 ```js
 auth.verify();
