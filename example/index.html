@@ -89,6 +89,10 @@
       usernameEl.innerHTML = data.email;
     });
 
+    auth.on('verified', function(data) {
+      console.log('verified', data);
+    });
+
     auth.on('logout', function() {
       console.log('logout');
       usernameEl.innerHTML = '';
