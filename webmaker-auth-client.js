@@ -275,7 +275,7 @@
 
             // Email is the same as response.
             if (email && data.email === email) {
-              self.emitter.emitEvent('verified', [data.user]);
+              self.emitter.emitEvent('login', [data.user], 'verified');
               self.storage.set(data.user);
             }
 
@@ -286,11 +286,8 @@
             }
 
             // No cookie
-            else if (email && !data.user) {
+            else {
               self.logout();
-            } else {
-              self.emitter.emitEvent('verified', false);
-              self.storage.clear();
             }
 
           }
@@ -307,7 +304,7 @@
 
         };
 
-        http.send(body);
+        http.send();
 
       };
 
@@ -407,6 +404,7 @@
         http.onreadystatechange = function () {
           if (http.readyState === 4 && http.status === 200) {
             self.emitter.emitEvent('logout');
+            self.storage.clear();
           }
 
           // Some other error
@@ -421,8 +419,6 @@
         };
         http.send(null);
 
-        self.emitter.emitEvent('logout');
-        self.storage.clear();
       };
 
       // Utilities for accessing local storage
@@ -451,6 +447,11 @@
           delete localStorage[self.localStorageKey];
         }
       };
+
+      // Affect login status verification when (re)focusing on apps in browser tabs
+      window.addEventListener('focus', function() {
+        self.verify();
+      });
 
     };
   }

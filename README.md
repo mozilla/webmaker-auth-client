@@ -125,15 +125,13 @@ auth.on('event', callback);
 auth.off('event', callback);
 ```
 
-`verify`: When the token is verified.
-
 `login`: When a user logs in or a session is automatically restored.
 
 `error`: Includes error message.
 
-`logout`: When user logs out or is logged out due to an error.
+`logout`: When user logs out or is logged out due to an error, or when no user session exists.
 
-## Session restore and SSO 
+## Session restore and SSO
 ### To automatically login users and set up SSO, you must call
 ```js
 auth.verify();
