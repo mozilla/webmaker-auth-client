@@ -317,6 +317,7 @@
             self.emitter.emitEvent('error', [
               'No assertion was received'
             ]);
+            return;
           }
 
           var http = new XMLHttpRequest();
