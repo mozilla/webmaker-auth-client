@@ -347,8 +347,6 @@
               clearTimeout(timeoutInstance);
             }
 
-            window.addEventListener('focus', self.verify, false);
-
             if (http.readyState === 4 && http.status === 200) {
               var data = JSON.parse(http.responseText);
 
@@ -361,6 +359,7 @@
               if (data.user) {
                 self.storage.set(data.user);
                 self.emitter.emitEvent('login', [data.user]);
+                window.addEventListener('focus', self.verify, false);
               }
 
               // Email valid, user does not exist
@@ -408,11 +407,10 @@
         http.setRequestHeader('X-CSRF-Token', self.csrfToken);
         http.onreadystatechange = function () {
 
-          window.addEventListener('focus', self.verify, false);
-
           if (http.readyState === 4 && http.status === 200) {
             self.emitter.emitEvent('logout');
             self.storage.clear();
+            window.addEventListener('focus', self.verify, false);
           }
 
           // Some other error
