@@ -311,6 +311,8 @@
           console.error('No persona found. Did you include include.js?');
         }
 
+        window.removeEventListener('focus', self.verify, false);
+
         window.navigator.id.get(function (assertion) {
 
           if (!assertion) {
@@ -357,6 +359,7 @@
               if (data.user) {
                 self.storage.set(data.user);
                 self.emitter.emitEvent('login', [data.user]);
+                window.addEventListener('focus', self.verify, false);
               }
 
               // Email valid, user does not exist
@@ -395,14 +398,19 @@
       };
 
       self.logout = function () {
+
+        window.removeEventListener('focus', self.verify, false);
+
         var http = new XMLHttpRequest();
         http.withCredentials = self.withCredentials;
         http.open('POST', self.urls.logout, true);
         http.setRequestHeader('X-CSRF-Token', self.csrfToken);
         http.onreadystatechange = function () {
+
           if (http.readyState === 4 && http.status === 200) {
             self.emitter.emitEvent('logout');
             self.storage.clear();
+            window.addEventListener('focus', self.verify, false);
           }
 
           // Some other error
@@ -445,11 +453,6 @@
           delete localStorage[self.localStorageKey];
         }
       };
-
-      // Affect login status verification when (re)focusing on apps in browser tabs
-      window.addEventListener('focus', function() {
-        self.verify();
-      });
 
     };
   }
