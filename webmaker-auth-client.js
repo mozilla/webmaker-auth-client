@@ -311,6 +311,8 @@
           console.error('No persona found. Did you include include.js?');
         }
 
+        window.removeEventListener('focus', self.verify, false);
+
         window.navigator.id.get(function (assertion) {
 
           if (!assertion) {
@@ -344,6 +346,8 @@
             if (self.timeout && timeoutInstance) {
               clearTimeout(timeoutInstance);
             }
+
+            window.addEventListener('focus', self.verify, false);
 
             if (http.readyState === 4 && http.status === 200) {
               var data = JSON.parse(http.responseText);
@@ -395,11 +399,17 @@
       };
 
       self.logout = function () {
+
+        window.removeEventListener('focus', self.verify, false);
+
         var http = new XMLHttpRequest();
         http.withCredentials = self.withCredentials;
         http.open('POST', self.urls.logout, true);
         http.setRequestHeader('X-CSRF-Token', self.csrfToken);
         http.onreadystatechange = function () {
+
+          window.addEventListener('focus', self.verify, false);
+
           if (http.readyState === 4 && http.status === 200) {
             self.emitter.emitEvent('logout');
             self.storage.clear();
@@ -445,11 +455,6 @@
           delete localStorage[self.localStorageKey];
         }
       };
-
-      // Affect login status verification when (re)focusing on apps in browser tabs
-      window.addEventListener('focus', function() {
-        self.verify();
-      });
 
     };
   }
