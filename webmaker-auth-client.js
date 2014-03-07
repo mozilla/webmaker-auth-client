@@ -393,6 +393,12 @@
 
           http.send(body);
 
+        }, {
+          backgroundColor: "#E3EAEE",
+          privacyPolicy: "https://webmaker.org/privacy",
+          siteLogo: "https://stuff.webmaker.org/persona-assets/logo-webmaker.png",
+          siteName: "Mozilla Webmaker",
+          termsOfService: "https://webmaker.org/terms"
         });
 
       };
