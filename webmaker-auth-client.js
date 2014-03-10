@@ -31,7 +31,7 @@
         logout: self.host + self.paths.logout,
         checkUsername: self.host + self.paths.checkUsername
       };
-      self.audience = options.audience || window.location.origin;
+      self.audience = options.audience || (window.location.protocol + "//" + window.location.host);
       self.prefix = options.prefix || 'webmaker-';
       self.timeout = options.timeout || 10;
       self.localStorageKey = self.prefix + 'login';
@@ -173,8 +173,8 @@
           username: username
         });
 
-        http.withCredentials = self.withCredentials;
         http.open('POST', self.urls.checkUsername, true);
+        http.withCredentials = self.withCredentials;
         http.setRequestHeader('Content-type', 'application/json');
         http.setRequestHeader('X-CSRF-Token', self.csrfToken);
 
@@ -217,8 +217,8 @@
           user: data.user
         });
 
-        http.withCredentials = self.withCredentials;
         http.open('POST', self.urls.create, true);
+        http.withCredentials = self.withCredentials;
         http.setRequestHeader('Content-type', 'application/json');
         http.setRequestHeader('X-CSRF-Token', self.csrfToken);
 
@@ -262,8 +262,8 @@
 
         var http = new XMLHttpRequest();
 
-        http.withCredentials = self.withCredentials;
         http.open('POST', self.urls.verify, true);
+        http.withCredentials = self.withCredentials;
         http.setRequestHeader('Content-type', 'application/json');
         http.setRequestHeader('X-CSRF-Token', self.csrfToken);
         http.onreadystatechange = function () {
@@ -336,8 +336,8 @@
             }, self.timeout * 1000);
           }
 
-          http.withCredentials = self.withCredentials;
           http.open('POST', self.urls.authenticate, true);
+          http.withCredentials = self.withCredentials;
           http.setRequestHeader('Content-type', 'application/json');
           http.setRequestHeader('X-CSRF-Token', self.csrfToken);
           http.onreadystatechange = function () {
@@ -408,8 +408,8 @@
         window.removeEventListener('focus', self.verify, false);
 
         var http = new XMLHttpRequest();
-        http.withCredentials = self.withCredentials;
         http.open('POST', self.urls.logout, true);
+        http.withCredentials = self.withCredentials;
         http.setRequestHeader('X-CSRF-Token', self.csrfToken);
         http.onreadystatechange = function () {
 
