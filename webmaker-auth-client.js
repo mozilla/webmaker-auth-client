@@ -31,7 +31,7 @@
         logout: self.host + self.paths.logout,
         checkUsername: self.host + self.paths.checkUsername
       };
-      self.audience = options.audience || window.location.origin;
+      self.audience = options.audience || (window.location.protocol + "//" + window.location.host);
       self.prefix = options.prefix || 'webmaker-';
       self.timeout = options.timeout || 10;
       self.localStorageKey = self.prefix + 'login';
