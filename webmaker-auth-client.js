@@ -1,5 +1,6 @@
 (function (window) {
 
+  var usernameRegex = /^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\-\_]{1,20}$/;
   function webmakerAuthClientDefinition(EventEmitter) {
 
     return function WebmakerAuthClient(options) {
@@ -51,24 +52,37 @@
 
       self.modal.checkUsernameOnChange = function () {
         var usernameTakenError = self.modal.element.querySelector('.username-taken-error');
+        var usernameInvalidError = self.modal.element.querySelector('.username-invalid-error');
         var usernameRequiredError = self.modal.element.querySelector('.username-required-error');
         var usernameGroup = self.modal.element.querySelector('.username-group');
         var username = this.value;
-        self.checkUsername(username, function (taken) {
-          if (taken) {
+        if (!username) {
+          usernameGroup.classList.remove('has-success');
+          usernameGroup.classList.add('has-error');
+          usernameTakenError.classList.add('hidden');
+          usernameRequiredError.classList.remove('hidden');
+          usernameInvalidError.classList.add('hidden');
+          return;
+        }
+        self.checkUsername(username, function (error, message) {
+          if (error && message === 'Username taken') {
             usernameGroup.classList.add('has-error');
             usernameGroup.classList.remove('has-success');
             usernameTakenError.classList.remove('hidden');
-          } else if (!username) {
-            usernameGroup.classList.remove('has-success');
+            usernameRequiredError.classList.add('hidden');
+            usernameInvalidError.classList.add('hidden');
+          } else if (error && message === 'Username invalid') {
             usernameGroup.classList.add('has-error');
+            usernameGroup.classList.remove('has-success');
+            usernameInvalidError.classList.remove('hidden');
             usernameTakenError.classList.add('hidden');
-            usernameRequiredError.classList.remove('hidden');
+            usernameRequiredError.classList.add('hidden');
           } else {
             usernameGroup.classList.remove('has-error');
             usernameGroup.classList.add('has-success');
             usernameTakenError.classList.add('hidden');
             usernameRequiredError.classList.add('hidden');
+            usernameInvalidError.classList.add('hidden');
           }
         });
       };
@@ -82,6 +96,7 @@
 
         var usernameTakenError = self.modal.element.querySelector('.username-taken-error');
         var usernameRequiredError = self.modal.element.querySelector('.username-required-error');
+        var usernameInvalidError = self.modal.element.querySelector('.username-invalid-error');
         var agreeError = self.modal.element.querySelector('.agree-error');
 
         var usernameInput = self.modal.element.querySelector('[name="username"]');
@@ -101,9 +116,11 @@
           }
 
           if (!usernameInput.value) {
-            usernameGroup.classList.add('has-error');
             usernameGroup.classList.remove('has-success');
+            usernameGroup.classList.add('has-error');
+            usernameTakenError.classList.add('hidden');
             usernameRequiredError.classList.remove('hidden');
+            usernameInvalidError.classList.add('hidden');
             hasError = true;
           }
 
@@ -111,11 +128,18 @@
             return;
           }
 
-          self.checkUsername(usernameInput.value, function (taken) {
-            if (taken) {
+          self.checkUsername(usernameInput.value, function (error, message) {
+            if (error && message === 'Username taken') {
               usernameGroup.classList.add('has-error');
               usernameGroup.classList.remove('has-success');
               usernameTakenError.classList.remove('hidden');
+              usernameRequiredError.classList.add('hidden');
+              usernameInvalidError.classList.add('hidden');
+            } else if (error && message === 'Username invalid') {
+              usernameGroup.classList.add('has-error');
+              usernameGroup.classList.remove('has-success');
+              usernameInvalidError.classList.remove('hidden');
+              usernameTakenError.classList.add('hidden');
               usernameRequiredError.classList.add('hidden');
             } else {
               self.createUser({
@@ -128,6 +152,7 @@
 
               usernameTakenError.classList.add('hidden');
               usernameRequiredError.classList.add('hidden');
+              usernameInvalidError.classList.add('hidden');
               agreeError.classList.add('hidden');
 
               usernameGroup.classList.remove('has-error');
@@ -168,6 +193,9 @@
       };
 
       self.checkUsername = function (username, callback) {
+        if ( !usernameRegex.test( username ) ) {
+          return callback(true, 'Username invalid');
+        }
         var http = new XMLHttpRequest();
         var body = JSON.stringify({
           username: username
