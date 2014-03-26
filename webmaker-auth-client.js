@@ -1,7 +1,8 @@
 (function (window) {
 
   var usernameRegex = /^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\-\_]{1,20}$/;
-  function webmakerAuthClientDefinition(EventEmitter) {
+
+  function webmakerAuthClientDefinition(EventEmitter, cookiejs) {
 
     return function WebmakerAuthClient(options) {
 
@@ -10,6 +11,22 @@
       }
 
       var self = this;
+
+      var referralCookieSettings = {
+        // grab only the first two parts of the hostname
+        domain: location.hostname.split(".").slice(-2).join("."),
+        path: "/",
+        // secure cookie if connection uses TLS
+        secure: location.protocol === "https:",
+        // expire in one week
+        expires: new Date((Date.now() + 60*1000*60*24*7))
+      };
+      var refValue = /ref=(\w+)/.exec(window.location.search);
+      var cookieRefValue = cookiejs.parse(document.cookie).webmakerReferral;
+
+      if ( refValue ) {
+        refValue = refValue[1];
+      }
 
       options = options || {};
       options.paths = options.paths || {};
@@ -32,13 +49,20 @@
         logout: self.host + self.paths.logout,
         checkUsername: self.host + self.paths.checkUsername
       };
-      self.audience = options.audience || (window.location.protocol + "//" + window.location.host);
+      self.audience = options.audience || (window.location.protocol + '//' + window.location.host);
       self.prefix = options.prefix || 'webmaker-';
       self.timeout = options.timeout || 10;
       self.localStorageKey = self.prefix + 'login';
       self.csrfToken = options.csrfToken;
       // Needed when cookie-issuing server is on a different port than the client
       self.withCredentials = options.withCredentials === false ? false : true;
+
+      // save referrer value
+      if (refValue) {
+        if ( cookieRefValue !== refValue) {
+          document.cookie = cookiejs.serialize("webmakerReferral", refValue, referralCookieSettings);
+        }
+      }
 
       // Create New User Modal
       self.handleNewUserUI = options.handleNewUserUI === false ? false : true;
@@ -146,7 +170,8 @@
                 assertion: assertion,
                 user: {
                   username: usernameInput.value,
-                  mailingList: mailingListInput.checked
+                  mailingList: mailingListInput.checked,
+                  referrer: cookieRefValue
                 }
               });
 
@@ -193,7 +218,7 @@
       };
 
       self.checkUsername = function (username, callback) {
-        if ( !usernameRegex.test( username ) ) {
+        if (!usernameRegex.test(username)) {
           return callback(true, 'Username invalid');
         }
         var http = new XMLHttpRequest();
@@ -422,11 +447,11 @@
           http.send(body);
 
         }, {
-          backgroundColor: "#E3EAEE",
-          privacyPolicy: "https://webmaker.org/privacy",
-          siteLogo: "https://stuff.webmaker.org/persona-assets/logo-webmaker.png",
-          siteName: "Mozilla Webmaker",
-          termsOfService: "https://webmaker.org/terms"
+          backgroundColor: '#E3EAEE',
+          privacyPolicy: 'https://webmaker.org/privacy',
+          siteLogo: 'https://stuff.webmaker.org/persona-assets/logo-webmaker.png',
+          siteName: 'Mozilla Webmaker',
+          termsOfService: 'https://webmaker.org/terms'
         });
 
       };
@@ -493,12 +518,12 @@
 
   // AMD
   if (typeof define === 'function' && define.amd) {
-    define(['eventEmitter/EventEmitter'], webmakerAuthClientDefinition);
+    define(['eventEmitter/EventEmitter','cookie-js/cookie'], webmakerAuthClientDefinition);
   }
 
   // Global
   else {
-    window.WebmakerAuthClient = webmakerAuthClientDefinition(window.EventEmitter);
+    window.WebmakerAuthClient = webmakerAuthClientDefinition(window.EventEmitter, window.cookiejs);
   }
 
 })(window);
