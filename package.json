@@ -1,6 +1,6 @@
 {
   "name": "webmaker-auth-client",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "main": "webmaker-auth-client.js",
   "scripts": {
     "postinstall": "./node_modules/.bin/bower install"
