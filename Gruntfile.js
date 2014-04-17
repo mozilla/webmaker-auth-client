@@ -4,7 +4,7 @@ module.exports = function (grunt) {
     uglify: {
       main: {
         files: {
-          'dist/webmaker-auth-client.min.js': ['bower_components/eventEmitter/eventEmitter.js', 'webmaker-auth-client.js']
+          'dist/webmaker-auth-client.min.js': ['bower_components/eventEmitter/eventEmitter.js', 'bower_components/cookie-js/cookie.js', 'webmaker-auth-client.js']
         }
       }
     },
