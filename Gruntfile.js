@@ -1,10 +1,17 @@
 module.exports = function (grunt) {
 
   grunt.initConfig({
-    uglify: {
-      main: {
-        files: {
-          'dist/webmaker-auth-client.min.js': ['bower_components/eventEmitter/eventEmitter.js', 'bower_components/cookie-js/cookie.js', 'webmaker-auth-client.js']
+    requirejs: {
+      compile: {
+        options: {
+          baseUrl: './',
+          paths: {
+            'cookie-js/cookie': 'bower_components/cookie-js/cookie',
+            'eventEmitter/EventEmitter': 'bower_components/eventEmitter/EventEmitter'
+          },
+          name: 'webmaker-auth-client',
+          out: 'dist/webmaker-auth-client.min.js',
+          optimize: 'uglify2'
         }
       }
     },
@@ -15,7 +22,7 @@ module.exports = function (grunt) {
       },
       client: {
         files: ['webmaker-auth-client.js'],
-        tasks: ['uglify']
+        tasks: ['requirejs']
       }
     },
     shell: {
@@ -64,8 +71,8 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-shell-spawn');
   grunt.loadNpmTasks('grunt-jsbeautifier');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
 
   grunt.registerTask('default', ['shell:fakeApp', 'shell:fakeApp2', 'watch']);
 
@@ -76,6 +83,6 @@ module.exports = function (grunt) {
   grunt.registerTask('validate', ['jsbeautifier:validate', 'jshint']);
 
   // Build
-  grunt.registerTask('build', ['uglify']);
+  grunt.registerTask('build', ['requirejs']);
 
 };
