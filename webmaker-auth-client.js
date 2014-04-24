@@ -126,6 +126,7 @@
         var usernameInput = self.modal.element.querySelector('[name="username"]');
         var agreeInput = self.modal.element.querySelector('[name="agreeToTerms"]');
         var mailingListInput = self.modal.element.querySelector('[name="mailingList"]');
+        var languagePreference = self.modal.element.querySelector('[name=supportedLocales]');
 
         createBtn.removeEventListener('click', self.modal.createBtnOnClick, false);
         usernameInput.addEventListener('change', self.modal.checkUsernameOnChange, false);
@@ -171,7 +172,8 @@
                 user: {
                   username: usernameInput.value,
                   mailingList: mailingListInput.checked,
-                  referrer: cookieRefValue
+                  referrer: cookieRefValue,
+                  prefLocale: languagePreference.value
                 }
               });
 
