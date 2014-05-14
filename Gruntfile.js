@@ -7,7 +7,8 @@ module.exports = function (grunt) {
           baseUrl: './',
           paths: {
             'cookie-js/cookie': 'bower_components/cookie-js/cookie',
-            'eventEmitter/EventEmitter': 'bower_components/eventEmitter/EventEmitter'
+            'eventEmitter/EventEmitter': 'bower_components/eventEmitter/EventEmitter',
+            'analytics': 'bower_components/webmaker-analytics/analytics'
           },
           name: 'webmaker-auth-client',
           out: 'dist/webmaker-auth-client.min.js',
