@@ -12,7 +12,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "webmaker-auth": "0.0.8",
+    "webmaker-auth": "0.0.14",
     "bower": "~1.2.8"
   },
   "devDependencies": {

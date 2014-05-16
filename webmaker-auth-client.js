@@ -2,7 +2,7 @@
 
   var usernameRegex = /^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\-\_]{1,20}$/;
 
-  function webmakerAuthClientDefinition(EventEmitter, cookiejs) {
+  function webmakerAuthClientDefinition(EventEmitter, cookiejs, analytics) {
 
     return function WebmakerAuthClient(options) {
 
@@ -175,18 +175,23 @@
                   referrer: cookieRefValue,
                   prefLocale: languagePreference.value
                 }
+              }, function(err) {
+                if (err) {
+                  console.error(err);
+                  return;
+                }
+
+                usernameTakenError.classList.add('hidden');
+                usernameRequiredError.classList.add('hidden');
+                usernameInvalidError.classList.add('hidden');
+                agreeError.classList.add('hidden');
+
+                usernameGroup.classList.remove('has-error');
+                usernameGroup.classList.remove('has-success');
+                agreeGroup.classList.remove('has-error');
+
+                self.modal.close();
               });
-
-              usernameTakenError.classList.add('hidden');
-              usernameRequiredError.classList.add('hidden');
-              usernameInvalidError.classList.add('hidden');
-              agreeError.classList.add('hidden');
-
-              usernameGroup.classList.remove('has-error');
-              usernameGroup.classList.remove('has-success');
-              agreeGroup.classList.remove('has-error');
-
-              self.modal.close();
             }
           });
 
@@ -206,6 +211,8 @@
       };
 
       self.modal.close = function () {
+        analytics.event('Webmaker New User Cancelled');
+
         self.modal.element.classList.remove('in');
         self.modal.element.style.display = 'none';
         self.modal.element.setAttribute('aria-hidden', true);
@@ -271,6 +278,7 @@
           audience: self.audience,
           user: data.user
         });
+        callback = callback || function() {};
 
         http.open('POST', self.urls.create, true);
         http.withCredentials = self.withCredentials;
@@ -285,8 +293,13 @@
             if (data.user) {
               self.storage.set(data.user);
               self.emitter.emitEvent('login', [data.user, 'user created']);
+              analytics.event('Webmaker New User Created', {
+                nonInteraction: true
+              });
+              callback(null, data.user);
             } else {
               self.emitter.emitEvent('error', [http.responseText]);
+              callback(http.responseText);
             }
 
           }
@@ -294,11 +307,13 @@
           // Some other error
           else if (http.readyState === 4 && http.status && (http.status >= 400 || http.status < 200)) {
             self.emitter.emitEvent('error', [http.responseText]);
+            callback(http.responseText);
           }
 
           // No response
           else if (http.readyState === 4) {
             self.emitter.emitEvent('error', ['Looks like ' + self.urls.create + ' is not responding...']);
+            callback(http.responseText);
           }
 
         };
@@ -327,7 +342,7 @@
 
             // Email is the same as response.
             if (email && data.email === email) {
-              self.emitter.emitEvent('login', [data.user]);
+              self.emitter.emitEvent('login', [data.user, 'verified']);
               self.storage.set(data.user);
             }
 
@@ -339,7 +354,8 @@
 
             // No cookie
             else {
-              self.logout();
+              self.emitter.emitEvent('logout');
+              self.storage.clear();
             }
 
           }
@@ -364,7 +380,10 @@
 
         if (!window.navigator.id) {
           console.error('No persona found. Did you include include.js?');
+          return;
         }
+
+        analytics.event('Webmaker Login Clicked');
 
         window.removeEventListener('focus', self.verify, false);
 
@@ -374,8 +393,13 @@
             self.emitter.emitEvent('error', [
               'No assertion was received'
             ]);
+
+            analytics.event('Persona Login Cancelled');
+
             return;
           }
+
+          analytics.event('Persona Login Succeeded');
 
           var http = new XMLHttpRequest();
           var body = JSON.stringify({
@@ -385,6 +409,7 @@
 
           if (self.timeout) {
             var timeoutInstance = setTimeout(function () {
+              http.abort();
               self.emitter.emitEvent('error', [
                 'The request for a token timed out after ' + self.timeout + ' seconds'
               ]);
@@ -414,12 +439,14 @@
               if (data.user) {
                 self.storage.set(data.user);
                 self.emitter.emitEvent('login', [data.user]);
+                analytics.event('Webmaker Login Succeeded');
                 window.addEventListener('focus', self.verify, false);
               }
 
               // Email valid, user does not exist
               if (data.email && !data.user) {
                 self.emitter.emitEvent('newuser', [assertion, data.email]);
+                analytics.event('Webmaker New User Started');
 
                 // If handleNewUserUI is true, show the modal with correct data
                 if (self.handleNewUserUI) {
@@ -459,6 +486,8 @@
       };
 
       self.logout = function () {
+
+        analytics.event('Webmaker Logout Clicked');
 
         window.removeEventListener('focus', self.verify, false);
 
@@ -520,12 +549,12 @@
 
   // AMD
   if (typeof define === 'function' && define.amd) {
-    define(['eventEmitter/EventEmitter','cookie-js/cookie'], webmakerAuthClientDefinition);
+    define(['eventEmitter/EventEmitter','cookie-js/cookie', 'analytics'], webmakerAuthClientDefinition);
   }
 
   // Global
   else {
-    window.WebmakerAuthClient = webmakerAuthClientDefinition(window.EventEmitter, window.cookiejs);
+    window.WebmakerAuthClient = webmakerAuthClientDefinition(window.EventEmitter, window.cookiejs, window.analytics);
   }
 
 })(window);
