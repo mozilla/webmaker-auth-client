@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "main": "webmaker-auth-client.js",
   "scripts": {
-    "postinstall": "./node_modules/.bin/bower install"
+    "postinstall": "./node_modules/.bin/bower install",
+    "test": "grunt validate"
   },
   "repository": {
     "type": "git",
