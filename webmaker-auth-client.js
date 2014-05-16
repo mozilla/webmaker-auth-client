@@ -14,17 +14,17 @@
 
       var referralCookieSettings = {
         // grab only the first two parts of the hostname
-        domain: location.hostname.split(".").slice(-2).join("."),
-        path: "/",
+        domain: location.hostname.split('.').slice(-2).join('.'),
+        path: '/',
         // secure cookie if connection uses TLS
-        secure: location.protocol === "https:",
+        secure: location.protocol === 'https:',
         // expire in one week
-        expires: new Date((Date.now() + 60*1000*60*24*7))
+        expires: new Date((Date.now() + 60 * 1000 * 60 * 24 * 7))
       };
       var refValue = /ref=(\w+)/.exec(window.location.search);
       var cookieRefValue = cookiejs.parse(document.cookie).webmakerReferral;
 
-      if ( refValue ) {
+      if (refValue) {
         refValue = refValue[1];
       }
 
@@ -59,8 +59,8 @@
 
       // save referrer value
       if (refValue) {
-        if ( cookieRefValue !== refValue) {
-          document.cookie = cookiejs.serialize("webmakerReferral", refValue, referralCookieSettings);
+        if (cookieRefValue !== refValue) {
+          document.cookie = cookiejs.serialize('webmakerReferral', refValue, referralCookieSettings);
         }
       }
 
@@ -175,7 +175,7 @@
                   referrer: cookieRefValue,
                   prefLocale: languagePreference.value
                 }
-              }, function(err) {
+              }, function (err) {
                 if (err) {
                   console.error(err);
                   return;
@@ -278,7 +278,7 @@
           audience: self.audience,
           user: data.user
         });
-        callback = callback || function() {};
+        callback = callback || function () {};
 
         http.open('POST', self.urls.create, true);
         http.withCredentials = self.withCredentials;
@@ -549,7 +549,7 @@
 
   // AMD
   if (typeof define === 'function' && define.amd) {
-    define(['eventEmitter/EventEmitter','cookie-js/cookie', 'analytics'], webmakerAuthClientDefinition);
+    define(['eventEmitter/EventEmitter', 'cookie-js/cookie', 'analytics'], webmakerAuthClientDefinition);
   }
 
   // Global
