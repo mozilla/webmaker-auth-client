@@ -15,6 +15,12 @@ This package has one dependency, [EventEmitter](https://github.com/Wolfy87/Event
 bower install webmaker-auth-client --save
 ```
 
+You also need to include persona's include.js file in your html:
+
+```
+<script src="https://login.persona.org/include.js"></script>
+```
+
 
 ## What's included?
 
