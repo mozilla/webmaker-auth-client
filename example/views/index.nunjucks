@@ -29,6 +29,13 @@
   <script src="https://login.persona.org/include.js"></script>
   <script src="../bower_components/eventEmitter/EventEmitter.js"></script>
   <script src="../bower_components/cookie-js/cookie.js"></script>
+  <script>
+    var _gaq = {
+      push: function(args) {
+        console.log("analytics event: ", args);
+      }
+    };
+  </script>
   <script src="../bower_components/webmaker-analytics/analytics.js"></script>
   <script src="../webmaker-auth-client.js"></script>
   <script>
