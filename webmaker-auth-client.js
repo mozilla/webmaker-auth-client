@@ -1,6 +1,6 @@
 (function (window) {
 
-  var usernameRegex = /^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\-\_]{1,20}$/;
+  var usernameRegex = /^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\-]{1,20}$/;
 
   function webmakerAuthClientDefinition(EventEmitter, cookiejs, analytics) {
 
