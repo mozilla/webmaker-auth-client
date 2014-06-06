@@ -61,6 +61,7 @@
       if (refValue) {
         if (cookieRefValue !== refValue) {
           document.cookie = cookiejs.serialize('webmakerReferral', refValue, referralCookieSettings);
+          cookieRefValue = refValue;
         }
       }
 
