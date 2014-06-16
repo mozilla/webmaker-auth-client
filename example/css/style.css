@@ -1,0 +1,302 @@
+
+body {
+  background:#ccc;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 100;
+  margin:0;
+}
+
+/**
+ * type
+ * 
+ */
+
+h1, h2, h3 { font-weight: 100; }
+
+.page h3 { margin-top:0;}
+
+
+
+
+
+/**
+ * nav
+ * 
+ */
+
+nav a:link { 
+  display: inline-block;
+  color:#333; 
+  background:white;
+  text-decoration: none;
+}
+
+nav a:visited { color:#333; }
+nav a:hover { color:#fff; background:#333; text-decoration: none; }
+nav a:active { color:#fff; background:#f0f; }
+
+nav a.hamburger { display: none; }
+
+nav a#signuplink {
+  color:white;
+  background:#3fb58e;
+}
+nav a#signuplink:hover {
+  background:#328f70 ;
+}
+
+#userlink { 
+  display: inline-block;
+}
+
+
+/**
+ * header
+ * 
+ */
+
+
+header {
+  background:rgba(255,255,255,1);
+}
+
+header a {
+  padding:.5em 1em;
+    margin-right:0;
+  background:white;
+  text-decoration:none;
+}
+
+
+header h1 { cursor:pointer;}
+
+header nav {
+  position:absolute; 
+  display: inline-block;
+  top:0; 
+  right:175px;
+}
+
+header .webmaker-logo img { 
+    margin:10px 24px;
+}
+
+
+
+/**
+ * tabzilla
+ * 
+ */
+
+#tabzilla { 
+  position:absolute; 
+  top:0; 
+  right:10px;
+
+
+float: right;
+display: block;
+background: url('/media/img/tabzilla/tab.png') repeat scroll 0% 0% transparent;
+height: 44px;
+width: 150px;
+position: relative;
+text-indent: -2000px;
+overflow: hidden;
+
+position: absolute;
+top: 0px;
+right: 5px;
+
+background: url('../img/tab.png') no-repeat scroll left top / 150px auto transparent;
+
+}
+
+
+#tabzilla:after {
+    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEX///9ISEhr7AOpAAAAAXRSTlMAQObYZgAAACRJREFUCB1jQAYcAgwyFgx2NQzyPxj4PzCwP2BgPsDA2MCABAB3igVoBVbiiwAAAABJRU5ErkJggg==') repeat scroll 0% 0% rgb(255, 255, 255);
+    content: " ";
+    position: absolute;
+    height: 16px;
+    width: 16px;
+    top: 11px;
+    right: 23px;
+    transform: rotate(0deg);
+    transition: all 0.2s ease-in-out 0s;
+    border-radius: 8px;
+}
+
+
+
+/**
+ * pages
+ * 
+ */
+
+.page { 
+  display:none; 
+    position:relative;
+    background:white;
+    top:4em;
+    padding:2em;
+    min-height:800px;
+    
+}
+
+
+/**
+ * forms
+ * 
+ */
+
+label { 
+  display: block;
+  margin-bottom: 2px;
+  font-size:.8em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color:#666;
+
+}
+
+input,
+form button {
+  font-size:1.2em;
+}
+
+
+
+/**
+ * buttons
+ * 
+ */
+
+.logout { 
+  position:absolute;
+  top:4em; right:2em;
+}
+
+
+
+
+
+/**
+ * modal
+ * 
+ */
+
+
+.modal {
+  /*display: block;*/
+}
+
+.modal-backdrop {
+  background:rgba(0,0,0,0.3);
+}
+
+.modal-dialog {
+  z-index: 1041;
+  top:5%;
+}
+
+/**
+ * notice & alerts
+ * 
+ */
+
+#notice {
+  display: none;
+    position: absolute;
+    top:80px; left:0; right:0;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+.highlight {
+    background:#FFF8DC;
+    padding:1em;
+    text-align: center; 
+}
+
+
+/**
+ * imgs
+ * 
+ */
+
+.thumb { 
+  display: inline-block;
+  height:90px; width:90px; 
+  margin:0 10px 10px 0;
+  background:#aaa;
+}
+.thumb:hover { 
+  background:#999;
+}
+
+
+
+
+
+/**
+ * persona
+ * 
+ */
+
+.persona { 
+  color:white !important;
+}
+
+/**
+ * responsive
+ * 
+ */
+
+
+@media only screen and (max-width : 600px) {
+  #tabzilla { display:none; }
+  header { border-bottom-width:1px; }
+  header nav { right:0px; }
+  nav a.hamburger { display: inline-block;}
+}
+
+@media only screen and (max-width : 480px) {
+  header { padding-top:0; }
+  header h1 { 
+    display:inline-block; 
+    font-size:1.25em;
+    margin-top:.25em; 
+  }
+}
+
+
+
+/**
+ * fake webmaker
+ * 
+ */
+
+#fakewebmaker {
+  position: relative;
+
+}
+
+#webmaker-screenshot {
+  position:absolute;
+    top:10px; 
+    min-width:1000px;
+    width:100%;
+  z-index:-1;
+}
+
+#fakewebmaker  header { 
+  border-bottom-width:1px; 
+  padding-top:0; 
+}
+#fakewebmaker header h1 { 
+    display:inline-block; 
+    font-size:1.25em;
+    margin-top:.25em; 
+  }
+
+

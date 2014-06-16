@@ -55,6 +55,18 @@ module.exports = function(config) {
     res.render('index.nunjucks');
   });
 
+  app.get('/token', function(req, res) {
+    res.render('token.nunjucks');
+  });
+
+  app.get('/proto', function(req, res) {
+    res.render('proto.nunjucks');
+  });
+
+  // Token Auth Paths
+  app.post('/request', login.handlers.request);
+  app.post('/authenticateToken', login.handlers.authenticateToken);
+
   app.post('/verify', login.handlers.verify);
   app.post('/authenticate', login.handlers.authenticate);
   app.post('/create', login.handlers.create);
