@@ -306,6 +306,7 @@
               analytics.event('Webmaker New User Created', {
                 nonInteraction: true
               });
+              analytics.conversionGoal('WebmakerNewUserCreated');
               callback(null, data.user);
             } else {
               self.emitter.emitEvent('error', [http.responseText]);
