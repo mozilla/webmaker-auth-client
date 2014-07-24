@@ -65,6 +65,14 @@
         }
       }
 
+      // remove the cookie after the referrer value has been saved
+      self.clearReferrerCookie = function () {
+        var expireReferralCookieSettings = referralCookieSettings;
+        // set this to a past date so that it is removed
+        expireReferralCookieSettings.expires = new Date((Date.now() - 10000));
+        document.cookie = cookiejs.serialize('webmakerReferral', 'expire', expireReferralCookieSettings);
+      };
+
       // Create New User Modal
       self.handleNewUserUI = options.handleNewUserUI === false ? false : true;
 
@@ -309,6 +317,7 @@
                 nonInteraction: true
               });
               analytics.conversionGoal('WebmakerNewUserCreated');
+              self.clearReferrerCookie();
               callback(null, data.user);
             } else {
               self.emitter.emitEvent('error', [http.responseText]);
@@ -414,10 +423,17 @@
 
           analytics.event('Persona Login Succeeded');
 
+          // capture the referrer ID if it exists, using the 'user' value
+          // for consistency with self.createUser
+          var user = {
+            referrer: cookieRefValue
+          };
+
           var http = new XMLHttpRequest();
           var body = JSON.stringify({
             audience: self.audience,
-            assertion: assertion
+            assertion: assertion,
+            user: user
           });
 
           if (self.timeout) {
@@ -453,6 +469,7 @@
                 self.storage.set(data.user);
                 self.emitter.emitEvent('login', [data.user]);
                 analytics.event('Webmaker Login Succeeded');
+                self.clearReferrerCookie();
                 window.addEventListener('focus', self.verify, false);
               }
 
