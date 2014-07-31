@@ -1,7 +1,9 @@
 (function (window) {
-
+var mfbt = true;
   var usernameRegex = /^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\-]{1,20}$/;
-
+if (mfbt) {
+  console.log("drink");
+}
   function webmakerAuthClientDefinition(EventEmitter, cookiejs, analytics) {
 
     return function WebmakerAuthClient(options) {
