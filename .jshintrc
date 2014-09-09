@@ -2,7 +2,8 @@
   "globals": {
     "module": true,
     "console": true,
-    "define": true
+    "define": true,
+    "require": true
   },
   "bitwise": true,
   "browser": true,
