@@ -1,6 +1,6 @@
 {
   "name": "webmaker-auth-client",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "main": "webmaker-auth-client.js",
   "scripts": {
     "build": "grunt build",
