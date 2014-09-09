@@ -580,9 +580,7 @@
   // AMD
   if (typeof define === 'function' && define.amd) {
     define(['eventEmitter/EventEmitter', 'cookie-js/cookie', 'analytics'], webmakerAuthClientDefinition);
-  }
-
-  else if (typeof module === 'object' && module.exports){
+  } else if (typeof module === 'object' && module.exports) {
     var EventEmitter = require('./bower_components/eventEmitter/EventEmitter.min.js');
     var cookiejs = require('./bower_components/cookie-js/cookie.js');
     var analytics = require('./bower_components/webmaker-analytics/analytics.js');
