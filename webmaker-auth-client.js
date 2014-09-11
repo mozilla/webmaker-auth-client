@@ -1,5 +1,6 @@
-(function (window) {
+/*global localStorage, location, define*/
 
+(function (window) {
   var usernameRegex = /^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\-]{1,20}$/;
 
   function webmakerAuthClientDefinition(EventEmitter, cookiejs, analytics) {
@@ -271,13 +272,13 @@
           }
           // Some other error
           else if (http.readyState === 4 && http.status && (http.status >= 400 || http.status < 200)) {
-            self.emitter.emitEvent('error', [http.responseText]);
+            self.emitter.emit('error', http.responseText);
             callback(false, 'Error checking username');
           }
 
           // No response
           else if (http.readyState === 4) {
-            self.emitter.emitEvent('error', ['Looks like ' + self.urls.checkUsername + ' is not responding...']);
+            self.emitter.emit('error', 'Looks like ' + self.urls.checkUsername + ' is not responding...');
             callback(false, 'Error checking username');
           }
 
@@ -312,7 +313,7 @@
             // User creation successful
             if (data.user) {
               self.storage.set(data.user);
-              self.emitter.emitEvent('login', [data.user, 'user created']);
+              self.emitter.emit('login', data.user, 'user created');
               analytics.event('Webmaker New User Created', {
                 nonInteraction: true
               });
@@ -320,7 +321,7 @@
               self.clearReferrerCookie();
               callback(null, data.user);
             } else {
-              self.emitter.emitEvent('error', [http.responseText]);
+              self.emitter.emit('error', http.responseText);
               callback(http.responseText);
             }
 
@@ -328,13 +329,13 @@
 
           // Some other error
           else if (http.readyState === 4 && http.status && (http.status >= 400 || http.status < 200)) {
-            self.emitter.emitEvent('error', [http.responseText]);
+            self.emitter.emit('error', http.responseText);
             callback(http.responseText);
           }
 
           // No response
           else if (http.readyState === 4) {
-            self.emitter.emitEvent('error', ['Looks like ' + self.urls.create + ' is not responding...']);
+            self.emitter.emit('error', 'Looks like ' + self.urls.create + ' is not responding...');
             callback(http.responseText);
           }
 
@@ -347,7 +348,7 @@
       self.verify = function () {
 
         if (self.storage.get()) {
-          self.emitter.emitEvent('login', [self.storage.get(), 'restored']);
+          self.emitter.emit('login', self.storage.get(), 'restored');
         }
 
         var email = self.storage.get('email');
@@ -364,19 +365,19 @@
 
             // Email is the same as response.
             if (email && data.email === email) {
-              self.emitter.emitEvent('login', [data.user, 'verified']);
+              self.emitter.emit('login', data.user, 'verified');
               self.storage.set(data.user);
             }
 
             // Email is not the same, but is a cookie
             else if (data.user) {
-              self.emitter.emitEvent('login', [data.user, 'email mismatch']);
+              self.emitter.emit('login', data.user, 'email mismatch');
               self.storage.set(data.user);
             }
 
             // No cookie
             else {
-              self.emitter.emitEvent('logout');
+              self.emitter.emit('logout');
               self.storage.clear();
             }
 
@@ -384,12 +385,12 @@
 
           // Some other error
           else if (http.readyState === 4 && http.status && (http.status >= 400 || http.status < 200)) {
-            self.emitter.emitEvent('error', [http.responseText]);
+            self.emitter.emit('error', http.responseText);
           }
 
           // No response
           else if (http.readyState === 4) {
-            self.emitter.emitEvent('error', ['Looks like ' + self.urls.verify + ' is not responding...']);
+            self.emitter.emit('error', 'Looks like ' + self.urls.verify + ' is not responding...');
           }
 
         };
@@ -412,9 +413,7 @@
         window.navigator.id.get(function (assertion) {
 
           if (!assertion) {
-            self.emitter.emitEvent('error', [
-              'No assertion was received'
-            ]);
+            self.emitter.emit('error', 'No assertion was received');
 
             analytics.event('Persona Login Cancelled');
 
@@ -439,9 +438,7 @@
           if (self.timeout) {
             var timeoutInstance = setTimeout(function () {
               http.abort();
-              self.emitter.emitEvent('error', [
-                'The request for a token timed out after ' + self.timeout + ' seconds'
-              ]);
+              self.emitter.emit('error', 'The request for a token timed out after ' + self.timeout + ' seconds');
             }, self.timeout * 1000);
           }
 
@@ -461,13 +458,13 @@
 
               // There was an error
               if (data.error) {
-                self.emitter.emitEvent('error', [data.error]);
+                self.emitter.emit('error', data.error);
               }
 
               // User exists
               if (data.user) {
                 self.storage.set(data.user);
-                self.emitter.emitEvent('login', [data.user]);
+                self.emitter.emit('login', data.user);
                 analytics.event('Webmaker Login Succeeded');
                 self.clearReferrerCookie();
                 window.addEventListener('focus', self.verify, false);
@@ -475,7 +472,7 @@
 
               // Email valid, user does not exist
               if (data.email && !data.user) {
-                self.emitter.emitEvent('newuser', [assertion, data.email]);
+                self.emitter.emit('newuser', assertion, data.email);
                 analytics.event('Webmaker New User Started');
 
                 // If handleNewUserUI is true, show the modal with correct data
@@ -486,19 +483,19 @@
               }
 
               if (data.err) {
-                self.emitter.emitEvent('error', [data.err]);
+                self.emitter.emit('error', data.err);
               }
 
             }
 
             // Some other error
             else if (http.readyState === 4 && http.status && (http.status >= 400 || http.status < 200)) {
-              self.emitter.emitEvent('error', [http.responseText]);
+              self.emitter.emit('error', http.responseText);
             }
 
             // No response
             else if (http.readyState === 4) {
-              self.emitter.emitEvent('error', ['Looks like ' + self.urls.authenticate + ' is not responding...']);
+              self.emitter.emit('error', 'Looks like ' + self.urls.authenticate + ' is not responding...');
             }
 
           };
@@ -528,19 +525,19 @@
         http.onreadystatechange = function () {
 
           if (http.readyState === 4 && http.status === 200) {
-            self.emitter.emitEvent('logout');
+            self.emitter.emit('logout');
             self.storage.clear();
             window.addEventListener('focus', self.verify, false);
           }
 
           // Some other error
           else if (http.readyState === 4 && http.status && (http.status >= 400 || http.status < 200)) {
-            self.emitter.emitEvent('error', [http.responseText]);
+            self.emitter.emit('error', http.responseText);
           }
 
           // No response
           else if (http.readyState === 4) {
-            self.emitter.emitEvent('error', ['Looks like ' + self.urls.logout + ' is not responding...']);
+            self.emitter.emit('error', 'Looks like ' + self.urls.logout + ' is not responding...');
           }
         };
         http.send(null);
@@ -580,10 +577,13 @@
   // AMD
   if (typeof define === 'function' && define.amd) {
     define(['eventEmitter/EventEmitter', 'cookie-js/cookie', 'analytics'], webmakerAuthClientDefinition);
-  } else if (typeof module === 'object' && module.exports) {
-    var EventEmitter = require('./bower_components/eventEmitter/EventEmitter.min.js');
-    var cookiejs = require('./bower_components/cookie-js/cookie.js');
-    var analytics = require('./bower_components/webmaker-analytics/analytics.js');
+  }
+
+  // CommonJS
+  else if (typeof module === 'object' && module.exports) {
+    var cookiejs = require('cookie');
+    var EventEmitter = require('events').EventEmitter;
+    var analytics = require('webmaker-analytics');
     module.exports = webmakerAuthClientDefinition(EventEmitter, cookiejs, analytics);
   }
 
