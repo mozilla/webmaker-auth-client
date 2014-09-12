@@ -571,11 +571,15 @@
 
       };
 
-      self.authenticateToken = function (email, token) {
+      self.authenticateToken = function (email, token, validFor) {
 
         if (!email || !token) {
           self.emitter.emitEvent('error', ['missing token or email']);
           return;
+        }
+
+        if ( !validFor ) {
+          validFor = 'one-year';
         }
 
         analytics.event('Webmaker Authenticate Token Clicked');
@@ -585,7 +589,8 @@
         var http = new XMLHttpRequest();
         var body = JSON.stringify({
           email: email,
-          token: token
+          token: token,
+          validFor: validFor
         });
 
         if (self.timeout) {
