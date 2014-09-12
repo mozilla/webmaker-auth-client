@@ -621,7 +621,7 @@
               self.storage.set(data.user);
               self.emitter.emitEvent('tokenlogin', [data.user]);
               analytics.event('Webmaker Login Token Succeeded');
-              // window.addEventListener('focus', self.verify, false);
+              window.addEventListener('focus', self.verify, false);
             }
 
             if (data.err) {
@@ -714,7 +714,7 @@
                 self.emitter.emit('login', data.user);
                 analytics.event('Webmaker Login Succeeded');
                 self.clearReferrerCookie();
-                // window.addEventListener('focus', self.verify, false);
+                window.addEventListener('focus', self.verify, false);
               }
 
               // Email valid, user does not exist
@@ -774,7 +774,7 @@
           if (http.readyState === 4 && http.status === 200) {
             self.emitter.emit('logout');
             self.storage.clear();
-            // window.addEventListener('focus', self.verify, false);
+            window.addEventListener('focus', self.verify, false);
           }
 
           // Some other error
