@@ -578,7 +578,7 @@
           return;
         }
 
-        if ( !validFor ) {
+        if (!validFor) {
           validFor = 'one-year';
         }
 
