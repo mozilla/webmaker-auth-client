@@ -545,10 +545,9 @@
 
             // User exists
             if (data.status) {
-              self.storage.set(data.user);
               self.emitter.emitEvent('tokenrequested', [data.status]);
               analytics.event('Webmaker Login Token Requested');
-              return callback(null);
+              return callback(null, data.status);
             }
 
           }
@@ -556,13 +555,13 @@
           // Some other error
           else if (http.readyState === 4 && http.status && (http.status >= 400 || http.status < 200)) {
             self.emitter.emitEvent('error', [http.responseText]);
-            callback(http.responseText);
+            return callback(http.responseText);
           }
 
           // No response
           else if (http.readyState === 4) {
             self.emitter.emitEvent('error', ['Looks like ' + self.urls.request + ' is not responding...']);
-            callback('no response');
+            return callback('no response');
           }
 
         };
@@ -571,16 +570,15 @@
 
       };
 
-      self.authenticateToken = function (email, token, validFor) {
+      self.authenticateToken = function (email, token, validFor, callback) {
 
         if (!email || !token) {
           self.emitter.emitEvent('error', ['missing token or email']);
           return;
         }
 
-        if (!validFor) {
-          validFor = 'one-year';
-        }
+        validFor = validFor || 'one-year';
+        callback = callback || Function.prototype;
 
         analytics.event('Webmaker Authenticate Token Clicked');
 
@@ -593,12 +591,15 @@
           validFor: validFor
         });
 
+        var notResponding = 'Looks like ' + self.urls.authenticateToken + ' is not responding...';
+        var requestTimedOut = 'The login request timed out after ' + self.timeout + ' seconds';
+        var timeoutInstance;
+
         if (self.timeout) {
-          var timeoutInstance = setTimeout(function () {
+          timeoutInstance = setTimeout(function () {
             http.abort();
-            self.emitter.emitEvent('error', [
-              'The login request timed out after ' + self.timeout + ' seconds'
-            ]);
+            self.emitter.emitEvent('error', [requestTimedOut]);
+            callback(requestTimedOut);
           }, self.timeout * 1000);
         }
 
@@ -617,32 +618,29 @@
             var data = JSON.parse(http.responseText);
 
             // There was an error
-            if (data.error) {
-              self.emitter.emitEvent('error', [data.error]);
+            if (data.error || data.err) {
+              self.emitter.emitEvent('error', [data.error || data.err]);
+              return callback(data.error || data.err);
             }
 
-            // User exists
             if (data.user) {
-              self.storage.set(data.user);
               self.emitter.emitEvent('tokenlogin', [data.user]);
-              analytics.event('Webmaker Login Token Succeeded');
+              analytics.event('Webmaker Token Login Succeeded');
               window.addEventListener('focus', self.verify, false);
+              return callback(null, data.user);
             }
-
-            if (data.err) {
-              self.emitter.emitEvent('error', [data.err]);
-            }
-
           }
 
           // Some other error
           else if (http.readyState === 4 && http.status && (http.status >= 400 || http.status < 200)) {
             self.emitter.emitEvent('error', [http.responseText]);
+            return callback(http.responseText);
           }
 
           // No response
           else if (http.readyState === 4) {
-            self.emitter.emitEvent('error', ['Looks like ' + self.urls.authenticateToken + ' is not responding...']);
+            self.emitter.emitEvent('error', [notResponding]);
+            callback(notResponding);
           }
 
         };
