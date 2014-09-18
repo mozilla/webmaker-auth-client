@@ -44,13 +44,14 @@
       self.paths.logout = options.paths.logout || '/logout';
       self.paths.checkUsername = options.paths.checkUsername || '/check-username';
       self.paths.request = options.paths.request || '/auth/v2/request';
-      self.paths.checkEmail = options.paths.checkEmail || '/auth/v2/check-email';
+      self.paths.uidExists = options.paths.uidExists || '/auth/v2/uid-exists';
       self.paths.createUser = options.paths.createUser || '/auth/v2/create';
       self.paths.authenticateToken = options.paths.authenticateToken || '/auth/v2/authenticateToken';
       self.paths.verifyPassword = options.paths.verifyPassword || '/auth/v2/verify-password';
       self.paths.requestResetCode = options.paths.requestResetCode || '/auth/v2/request-reset-code';
-      self.paths.resetPassword = options.paths.resetPassword || '/auth/v2/reset-password';
       self.paths.removePassword = options.paths.removePassword || '/auth/v2/remove-password';
+      self.paths.enablePasswords = options.paths.enablePasswords || '/auth/v2/enable-passwords';
+      self.paths.resetPassword = options.paths.resetPassword || '/auth/v2/reset-password';
       self.urls = {
         request: self.host + self.paths.request,
         authenticateToken: self.host + self.paths.authenticateToken,
@@ -59,12 +60,13 @@
         createUser: self.host + self.paths.createUser,
         verify: self.host + self.paths.verify,
         logout: self.host + self.paths.logout,
-        checkEmail: self.host + self.paths.checkEmail,
+        uidExists: self.host + self.paths.uidExists,
         checkUsername: self.host + self.paths.checkUsername,
         verifyPassword: self.host + self.paths.verifyPassword,
         requestResetCode: self.host + self.paths.requestResetCode,
+        removePassword: self.host + self.paths.removePassword,
+        enablePasswords: self.host + self.paths.enablePasswords,
         resetPassword: self.host + self.paths.resetPassword,
-        removePassword: self.host + self.paths.removePassword
       };
       self.audience = options.audience || (window.location.protocol + '//' + window.location.host);
       self.prefix = options.prefix || 'webmaker-';
@@ -260,29 +262,27 @@
         self.emitter.removeListener(event, cb);
       };
 
-      self.checkEmail = function (email, callback) {
+      self.uidExists = function (uid, callback) {
         var http = new XMLHttpRequest();
 
         var body = JSON.stringify({
-          email: email
+          uid: uid
         });
 
-        http.open('POST', self.urls.checkEmail, true);
+        http.open('POST', self.urls.uidExists, true);
         http.withCredentials = self.withCredentials;
         http.setRequestHeader('Content-type', 'application/json');
         http.setRequestHeader('X-CSRF-Token', self.csrfToken);
 
         http.onreadystatechange = function () {
           if (http.readyState === 4 && http.status === 200) {
-            var response = JSON.parse(http.responseText);
-
-            // Username exists;
-            if (response.exists) {
-              callback(true, 'account-exists');
-            } else {
-              callback(false, 'no-account');
+            try {
+              var response = JSON.parse(http.responseText);
+              callback(response);
+            } catch (ex) {
+              self.emitter.emitEvent('error', ["could not parse response"]);
+              callback(false, 'error-checking-email');
             }
-
           }
           // Some other error
           else if (http.readyState === 4 && http.status && (http.status >= 400 || http.status < 200)) {
@@ -889,6 +889,140 @@
         };
 
         http.send(body);
+      };
+
+      self.requestPassword = function (uid, resetCode, newPassword, callback) {
+        var http = new XMLHttpRequest();
+        var body = JSON.stringify({
+          uid: uid,
+          resetCode: resetCode,
+          newPassword: newPassword
+        });
+
+        http.open('POST', self.urls.resetPassword, true);
+        http.withCredentials = self.withCredentials;
+        http.setRequestHeader('Content-type', 'application/json');
+        http.setRequestHeader('X-CSRF-Token', self.csrfToken);
+
+        http.onreadystatechange = function () {
+          if (http.readyState === 4 && http.status === 200) {
+            var data = JSON.parse(http.responseText);
+
+            if (data.status) {
+              self.emitter.emitEvent('resetrequestgenerated');
+              analytics.event('Webmaker User Reset Password', {
+                nonInteraction: true
+              });
+              callback(null);
+            } else {
+              self.emitter.emitEvent('error', [http.responseText]);
+              callback(http.responseText);
+            }
+
+          }
+
+          // Some other error
+          else if (http.readyState === 4 && http.status && (http.status >= 400 || http.status < 200)) {
+            self.emitter.emitEvent('error', [http.responseText]);
+            callback(http.responseText);
+          }
+
+          // No response
+          else if (http.readyState === 4) {
+            self.emitter.emitEvent('error', ['Looks like ' + self.urls.requestReset + ' is not responding...']);
+            callback(http.responseText);
+          }
+
+        };
+
+        http.send(body);
+      };
+
+      self.enablePasswords = function (password, callback) {
+        var http = new XMLHttpRequest();
+        var body = JSON.stringify({
+          password: password
+        });
+
+        http.open('POST', self.urls.enablePasswords, true);
+        http.withCredentials = self.withCredentials;
+        http.setRequestHeader('Content-type', 'application/json');
+        http.setRequestHeader('X-CSRF-Token', self.csrfToken);
+
+        http.onreadystatechange = function () {
+          if (http.readyState === 4 && http.status === 200) {
+            var data = JSON.parse(http.responseText);
+
+            if (data.status) {
+              self.emitter.emitEvent('passwords-enabled');
+              analytics.event('Webmaker User Enabled Passwords', {
+                nonInteraction: true
+              });
+              callback(null);
+            } else {
+              self.emitter.emitEvent('error', [http.responseText]);
+              callback(http.responseText);
+            }
+
+          }
+
+          // Some other error
+          else if (http.readyState === 4 && http.status && (http.status >= 400 || http.status < 200)) {
+            self.emitter.emitEvent('error', [http.responseText]);
+            callback(http.responseText);
+          }
+
+          // No response
+          else if (http.readyState === 4) {
+            self.emitter.emitEvent('error', ['Looks like ' + self.urls.requestReset + ' is not responding...']);
+            callback(http.responseText);
+          }
+
+        };
+
+        http.send(body);
+      };
+
+      self.removePassword = function (callback) {
+        var http = new XMLHttpRequest();
+
+        http.open('POST', self.urls.removePassword, true);
+        http.withCredentials = self.withCredentials;
+        http.setRequestHeader('Content-type', 'application/json');
+        http.setRequestHeader('X-CSRF-Token', self.csrfToken);
+
+        http.onreadystatechange = function () {
+          if (http.readyState === 4 && http.status === 200) {
+            var data = JSON.parse(http.responseText);
+
+            if (data.status) {
+              self.emitter.emitEvent('passwords-disabled');
+              analytics.event('Webmaker User Disabled Passwords', {
+                nonInteraction: true
+              });
+              callback(null);
+            } else {
+              self.emitter.emitEvent('error', [http.responseText]);
+              callback(http.responseText);
+            }
+
+          }
+
+          // Some other error
+          else if (http.readyState === 4 && http.status && (http.status >= 400 || http.status < 200)) {
+            self.emitter.emitEvent('error', [http.responseText]);
+            callback(http.responseText);
+          }
+
+          // No response
+          else if (http.readyState === 4) {
+            self.emitter.emitEvent('error', ['Looks like ' + self.urls.requestReset + ' is not responding...']);
+            callback(http.responseText);
+          }
+
+        };
+
+        http.send();
       };
 
       // Utilities for accessing local storage
