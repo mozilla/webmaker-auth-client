@@ -47,6 +47,10 @@
       self.paths.checkEmail = options.paths.checkEmail || '/auth/v2/check-email';
       self.paths.createUser = options.paths.createUser || '/auth/v2/create';
       self.paths.authenticateToken = options.paths.authenticateToken || '/auth/v2/authenticateToken';
+      self.paths.verifyPassword = options.paths.verifyPassword || '/auth/v2/verify-password';
+      self.paths.requestResetCode = options.paths.requestResetCode || '/auth/v2/request-reset-code';
+      self.paths.resetPassword = options.paths.resetPassword || '/auth/v2/reset-password';
+      self.paths.removePassword = options.paths.removePassword || '/auth/v2/remove-password';
       self.urls = {
         request: self.host + self.paths.request,
         authenticateToken: self.host + self.paths.authenticateToken,
@@ -56,7 +60,11 @@
         verify: self.host + self.paths.verify,
         logout: self.host + self.paths.logout,
         checkEmail: self.host + self.paths.checkEmail,
-        checkUsername: self.host + self.paths.checkUsername
+        checkUsername: self.host + self.paths.checkUsername,
+        verifyPassword: self.host + self.paths.verifyPassword,
+        requestResetCode: self.host + self.paths.requestResetCode,
+        resetPassword: self.host + self.paths.resetPassword,
+        removePassword: self.host + self.paths.removePassword
       };
       self.audience = options.audience || (window.location.protocol + '//' + window.location.host);
       self.prefix = options.prefix || 'webmaker-';
@@ -503,7 +511,7 @@
 
       };
 
-      self.request = function (email, callback) {
+      self.request = function (uid, callback) {
 
         analytics.event('Webmaker Request Token Clicked');
 
@@ -511,7 +519,7 @@
 
         var http = new XMLHttpRequest();
         var body = JSON.stringify({
-          email: email
+          uid: uid
         });
 
         if (self.timeout) {
@@ -570,10 +578,10 @@
 
       };
 
-      self.authenticateToken = function (email, token, validFor, callback) {
+      self.authenticateToken = function (uid, token, validFor, callback) {
 
-        if (!email || !token) {
-          self.emitter.emitEvent('error', ['missing token or email']);
+        if (!uid || !token) {
+          self.emitter.emitEvent('error', ['missing token or uid']);
           return;
         }
 
@@ -586,7 +594,7 @@
 
         var http = new XMLHttpRequest();
         var body = JSON.stringify({
-          email: email,
+          uid: uid,
           token: token,
           validFor: validFor
         });
@@ -791,7 +799,96 @@
           }
         };
         http.send(null);
+      };
 
+      self.verifyPassword = function (uid, password, callback) {
+        var http = new XMLHttpRequest();
+        var body = JSON.stringify({
+          uid: uid,
+          password: password
+        });
+
+        http.open('POST', self.urls.verifyPassword, true);
+        http.withCredentials = self.withCredentials;
+        http.setRequestHeader('Content-type', 'application/json');
+        http.setRequestHeader('X-CSRF-Token', self.csrfToken);
+
+        http.onreadystatechange = function () {
+          if (http.readyState === 4 && http.status === 200) {
+            var data = JSON.parse(http.responseText);
+            if (data.user) {
+              self.emitter.emitEvent('passwordlogin', [data.user]);
+              analytics.event('Webmaker User Password Login', {
+                nonInteraction: true
+              });
+              callback(null, true);
+            } else {
+              self.emitter.emitEvent('error', [http.responseText]);
+              callback(http.responseText);
+            }
+
+          }
+
+          // Some other error
+          else if (http.readyState === 4 && http.status && (http.status >= 400 || http.status < 200)) {
+            self.emitter.emitEvent('error', [http.responseText]);
+            callback(http.responseText);
+          }
+
+          // No response
+          else if (http.readyState === 4) {
+            self.emitter.emitEvent('error', ['Looks like ' + self.urls.setFirstPassword + ' is not responding...']);
+            callback(http.responseText);
+          }
+
+        };
+
+        http.send(body);
+      };
+
+      self.requestResetCode = function (uid, callback) {
+        var http = new XMLHttpRequest();
+        var body = JSON.stringify({
+          uid: uid
+        });
+
+        http.open('POST', self.urls.requestResetCode, true);
+        http.withCredentials = self.withCredentials;
+        http.setRequestHeader('Content-type', 'application/json');
+        http.setRequestHeader('X-CSRF-Token', self.csrfToken);
+
+        http.onreadystatechange = function () {
+          if (http.readyState === 4 && http.status === 200) {
+            var data = JSON.parse(http.responseText);
+
+            if (data.status) {
+              self.emitter.emitEvent('resetrequestgenerated');
+              analytics.event('Webmaker User Reset Password', {
+                nonInteraction: true
+              });
+              callback(null);
+            } else {
+              self.emitter.emitEvent('error', [http.responseText]);
+              callback(http.responseText);
+            }
+
+          }
+
+          // Some other error
+          else if (http.readyState === 4 && http.status && (http.status >= 400 || http.status < 200)) {
+            self.emitter.emitEvent('error', [http.responseText]);
+            callback(http.responseText);
+          }
+
+          // No response
+          else if (http.readyState === 4) {
+            self.emitter.emitEvent('error', ['Looks like ' + self.urls.requestReset + ' is not responding...']);
+            callback(http.responseText);
+          }
+
+        };
+
+        http.send(body);
       };
 
       // Utilities for accessing local storage
