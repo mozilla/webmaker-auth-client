@@ -278,22 +278,22 @@
           if (http.readyState === 4 && http.status === 200) {
             try {
               var response = JSON.parse(http.responseText);
-              callback(response);
+              callback(null, response);
             } catch (ex) {
-              self.emitter.emitEvent('error', ["could not parse response"]);
-              callback(false, 'error-checking-email');
+              self.emitter.emitEvent('error', ['could not parse response']);
+              callback('error-checking-email');
             }
           }
           // Some other error
           else if (http.readyState === 4 && http.status && (http.status >= 400 || http.status < 200)) {
             self.emitter.emitEvent('error', [http.responseText]);
-            callback(false, 'error-checking-email');
+            callback('error-checking-email');
           }
 
           // No response
           else if (http.readyState === 4) {
             self.emitter.emitEvent('error', ['Looks like ' + self.urls.checkEmail + ' is not responding...']);
-            callback(false, 'error-checking-email');
+            callback('error-checking-email');
           }
         };
 
@@ -827,6 +827,9 @@
               callback(http.responseText);
             }
 
+          } else if (http.readyState === 4 && http.status && http.status === 401) {
+            self.emitter.emitEvent('error', ['unauthorized']);
+            callback(null, false);
           }
 
           // Some other error
