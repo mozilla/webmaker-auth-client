@@ -956,7 +956,7 @@
           if (http.readyState === 4 && http.status === 200) {
             var data = JSON.parse(http.responseText);
 
-            if (data.status) {
+            if (data.user) {
               self.emitter.emitEvent('passwords-enabled');
               analytics.event('Webmaker User Enabled Passwords', {
                 nonInteraction: true
@@ -998,7 +998,7 @@
           if (http.readyState === 4 && http.status === 200) {
             var data = JSON.parse(http.responseText);
 
-            if (data.status) {
+            if (data.user) {
               self.emitter.emitEvent('passwords-disabled');
               analytics.event('Webmaker User Disabled Passwords', {
                 nonInteraction: true
