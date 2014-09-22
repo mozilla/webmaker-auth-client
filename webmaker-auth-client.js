@@ -894,7 +894,7 @@
         http.send(body);
       };
 
-      self.requestPassword = function (uid, resetCode, newPassword, callback) {
+      self.resetPassword = function (uid, resetCode, newPassword, callback) {
         var http = new XMLHttpRequest();
         var body = JSON.stringify({
           uid: uid,
@@ -912,7 +912,7 @@
             var data = JSON.parse(http.responseText);
 
             if (data.status) {
-              self.emitter.emitEvent('resetrequestgenerated');
+              self.emitter.emitEvent('passwordreset');
               analytics.event('Webmaker User Reset Password', {
                 nonInteraction: true
               });
@@ -932,7 +932,7 @@
 
           // No response
           else if (http.readyState === 4) {
-            self.emitter.emitEvent('error', ['Looks like ' + self.urls.requestReset + ' is not responding...']);
+            self.emitter.emitEvent('error', ['Looks like ' + self.urls.resetPassword + ' is not responding...']);
             callback(http.responseText);
           }
 
