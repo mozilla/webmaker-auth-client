@@ -585,7 +585,6 @@
           return;
         }
 
-        validFor = validFor || 'one-year';
         callback = callback || Function.prototype;
 
         analytics.event('Webmaker Authenticate Token Clicked');
