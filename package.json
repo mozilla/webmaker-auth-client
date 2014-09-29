@@ -29,11 +29,10 @@
     "nunjucks": "^1.0.5",
     "webmaker-auth": "^0.1.1",
     "webmaker-i18n": "^0.3.21",
-    "webmaker-locale-mapping": "0.0.4"
+    "webmaker-locale-mapping": "0.0.5"
   },
   "dependencies": {
     "cookie": "^0.1.2",
-    "webmaker-analytics": "^0.1.5",
-    "webmaker-locale-mapping": "0.0.5"
+    "webmaker-analytics": "^0.1.5"
   }
 }
