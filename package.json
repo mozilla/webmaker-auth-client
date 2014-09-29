@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "cookie": "^0.1.2",
-    "webmaker-analytics": "^0.1.5"
+    "webmaker-analytics": "^0.1.5",
+    "webmaker-locale-mapping": "0.0.5"
   }
 }
