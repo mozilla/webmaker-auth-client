@@ -38,12 +38,6 @@ module.exports = function (grunt) {
           async: true
         },
         command: 'node example/server.js'
-      },
-      fakeApp2: {
-        options: {
-          async: true
-        },
-        command: 'node example/server-2.js'
       }
     },
     jshint: {
@@ -75,7 +69,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('default', ['shell:fakeApp', 'shell:fakeApp2', 'watch']);
+  grunt.registerTask('default', ['shell:fakeApp', 'watch']);
 
   // Clean code before a commit
   grunt.registerTask('clean', ['jsbeautifier:modify', 'jshint']);
