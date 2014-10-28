@@ -5,6 +5,7 @@ Habitat.load();
 var env = new Habitat();
 var config = {
   LOGIN_URL: env.get('LOGIN_URL'),
+  AUTH_LOGIN_URL: env.get('AUTH_LOGIN_URL'),
   SECRET_KEY: env.get('SECRET_KEY')
 };
 

@@ -23,6 +23,7 @@ module.exports = function(config) {
 
   var login = new WebmakerLogin({
     loginURL: config.LOGIN_URL,
+    authLoginURL: config.AUTH_LOGIN_URL,
     secretKey: config.SECRET_KEY
   });
 
